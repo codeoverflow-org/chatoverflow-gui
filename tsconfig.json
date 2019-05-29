@@ -22,5 +22,9 @@
     "paths": {
       "@components/*": ["app/components"]
     }
-  }
+  },
+  "include": [
+    "./src/**/*",
+    "./node_modules/chatoverflow-api/**/*"
+  ]
 }
