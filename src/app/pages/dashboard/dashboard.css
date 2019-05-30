@@ -1,0 +1,17 @@
+#exampleIcons i {
+  font-size: 32pt !important;
+  margin-left: 5px
+}
+
+#serverStatus {
+  font-size: 18pt;
+  margin-top: 30px;
+}
+
+#serverStatus button {
+  margin-left: 5px;
+}
+
+#replButton {
+  margin-top: 10px;
+}

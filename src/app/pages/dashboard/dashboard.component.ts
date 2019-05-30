@@ -1,21 +1,36 @@
 import {Component, HostBinding} from "@angular/core";
 import {UpgradableComponent} from "theme/components/upgradable";
 import {ConfigService, ConfigInfo} from "chatoverflow-api";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent extends UpgradableComponent {
   @HostBinding('class.mdl-grid') private readonly mdlGrid = true;
 
-  private generatedMessage = "Connecting to the server...";
+  private serverMessage = "Connecting...";
+  private serverMessageClass = "color-text--orange";
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private router: Router) {
     super();
 
-    configService.getConfig().subscribe((response: ConfigInfo) => {
-      this.generatedMessage = `You're running Chat Overflow v${response.apiMajorVersion}.${response.apiMinorVersion}`
+    this.refreshServerStatus();
+  }
+
+  openREPL() {
+    this.router.navigate([`app/wip/`]);
+  }
+
+  refreshServerStatus() {
+    this.configService.getConfig().subscribe((response: ConfigInfo) => {
+      this.serverMessage = "Connected!";
+      this.serverMessageClass = "color-text--green";
+    }, error => {
+      this.serverMessage = "Unable to connect.";
+      this.serverMessageClass = "color-text--red";
     });
   }
 }

@@ -1,9 +1,68 @@
-<div class="row">
-  <base-card>
-    <base-card-title> Hello from Code Overflow!</base-card-title>
-    <base-card-body>
-      Welcome to the new Dashboard!<br>
-      {{ generatedMessage }}
-    </base-card-body>
-  </base-card>
+<div
+  class="mdl-grid mdl-cell mdl-cell--9-col-desktop mdl-cell--12-col-tablet mdl-cell--4-col-phone mdl-cell--top">
+  <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+    <base-card>
+      <base-card-title>
+        <h2 class="mdl-card__title-text">Chat Overflow</h2>
+      </base-card-title>
+      <base-card-body>
+        <img src="https://raw.githubusercontent.com/codeoverflow-org/chatoverflow/master/chatoverflow-logo.png"
+             width="300px"><br><br>
+        Welcome to Chat Overflow! This is the work in progress GUI.<br>Find more information over at <a
+        href="http://codeoverflow.org">codeoverflow.org!</a>
+      </base-card-body>
+    </base-card>
+  </div>
+  <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+    <base-card>
+      <base-card-title>
+        <h2 class="mdl-card__title-text">Relevant links</h2>
+      </base-card-title>
+      <base-card-body>
+        This GUI is based on the wonderful <a
+        href="https://github.com/CreativeIT/material-angular-dashboard">Darkboard</a>
+        ( <a href="http://material-angular-dashboard.creativeit.io/#/app/dashboard">Preview</a> ).
+        <br><br>
+        The icons are from <a href="https://material.io/tools/icons/?icon=fiber_new&style=baseline">Material design</a>.
+        They look tasty!<br><br>
+        <div id="exampleIcons">
+          <i class="material-icons">laptop</i>
+          <i class="material-icons">security</i>
+          <i class="material-icons">portrait</i>
+          <i class="material-icons">all_inclusive</i>
+          <i class="material-icons">free_breakfast</i>
+          <i class="material-icons">school</i>
+          <i class="material-icons">star</i>
+        </div>
+      </base-card-body>
+    </base-card>
+  </div>
+  <div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+    <base-card>
+      <base-card-title>
+        <h2 class="mdl-card__title-text">Better REPL</h2>
+      </base-card-title>
+      <base-card-body>
+        <div>The better REPL could also be called "I-hate-the-REPL"-GUI, and is a working prototype which can be used
+          until
+          this nice looking piece of software is ready.
+        </div>
+        <div id="replButton">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-light-blue"
+                  (click)="openREPL()">
+            <i class="material-icons">edit</i>
+            Open Better REPL
+          </button>
+        </div>
+        <div id="serverStatus">
+          Server status: <span [class]="serverMessageClass">{{ serverMessage }}</span>
+          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-white"
+                  (click)="refreshServerStatus()">
+            <i class="material-icons">refresh</i>
+          </button>
+        </div>
+
+      </base-card-body>
+    </base-card>
+  </div>
 </div>
