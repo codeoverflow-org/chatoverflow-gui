@@ -1,0 +1,22 @@
+#lastRequest {
+  font-size: 14pt !important;
+
+}
+
+#lastResponse {
+  font-size: 14pt !important;
+  margin-top: 10px;
+  padding: 5px;
+  border: 1px solid dimgray;
+  border-radius: 5px;
+  margin-left: 0 !important;
+}
+
+#authKey {
+  margin-bottom: 20px;
+  font-size: 9pt !important;
+}
+
+#loginButtons button {
+  margin-right: 5px;
+}
