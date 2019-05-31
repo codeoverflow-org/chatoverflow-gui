@@ -1,6 +1,14 @@
 import {Component, HostBinding} from "@angular/core";
 import {UpgradableComponent} from "theme/components/upgradable";
-import {ResultMessage, ConfigService} from "chatoverflow-api";
+import {
+  ResultMessage,
+  ConfigService,
+  TypeService,
+  RequirementTypes,
+  PluginType,
+  APIAndSpecificType,
+  SubTypes
+} from "chatoverflow-api";
 
 @Component({
   selector: 'better-repl',
@@ -16,8 +24,31 @@ export class BetterREPLComponent extends UpgradableComponent {
 
   private authKey = "";
 
-  constructor(private configService: ConfigService) {
+  private connectorTypes: Array<string>;
+  private requirementTypes: RequirementTypes;
+  private pluginTypes: Array<PluginType>;
+
+  constructor(private configService: ConfigService, private typeService: TypeService) {
     super();
+
+    this.requestTypes();
+  }
+
+  requestTypes() {
+    this.typeService.getConnectorType().subscribe((response: Array<string>) => {
+      this.logRequest("getConnectorType", true, JSON.stringify(response));
+      this.connectorTypes = response;
+    }, error => this.logGenericError("getConnectorType"));
+
+    this.typeService.getRequirementType().subscribe((response: RequirementTypes) => {
+      this.logRequest("getRequirementType", true, JSON.stringify(response));
+      this.requirementTypes = response
+    }, error => this.logGenericError("getRequirementType"));
+
+    this.typeService.getPlugin().subscribe((response: Array<PluginType>) => {
+      this.logRequest("getPlugin", true, JSON.stringify(response));
+      this.pluginTypes = response;
+    }, error => this.logGenericError("getPlugin"));
   }
 
   logRequest(command: string, lastRequestSuccessful: boolean, resultMessage: string) {
@@ -30,13 +61,17 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.logRequest(command, result.success, result.message);
   }
 
+  logGenericError(command: string) {
+    this.logRequest(command, false, "");
+  }
+
   login(password: string) {
     this.configService.postLogin({password: password}).subscribe((response: ResultMessage) => {
       this.logResultMessage("postLogin", response);
       if (response.success) {
         this.authKey = response.message;
       }
-    });
+    }, error => this.logGenericError("postLogin"));
   }
 
   register(password: string) {
@@ -45,6 +80,18 @@ export class BetterREPLComponent extends UpgradableComponent {
       if (response.success) {
         this.authKey = response.message;
       }
-    });
+    }, error => this.logGenericError("postRegister"));
+  }
+
+  getRequirementImpl(apiType: string) {
+    this.typeService.getReqImpl(apiType).subscribe((response: APIAndSpecificType) => {
+      this.logRequest("getReqImpl", response.found, JSON.stringify(response));
+    }, error => this.logGenericError("getReqImpl"));
+  }
+
+  getSubTypes(apiType: string) {
+    this.typeService.getSubTypes(apiType).subscribe((response: SubTypes) => {
+      this.logRequest("getSubTypes", response.subtypes.length > 0, JSON.stringify(response));
+    }, error => this.logGenericError("getSubTypes"))
   }
 }

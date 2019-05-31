@@ -20,7 +20,8 @@
     <base-card-body>
       <div id="loginButtons">
         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="password" id="password" value="" #passwordInput/>
+          <input class="mdl-textfield__input" type="password" id="password" value="" #passwordInput
+                 (keyup.enter)="login(passwordInput.value)"/>
           <label class="mdl-textfield__label" for="password">Framework password</label>
         </div>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
@@ -38,6 +39,73 @@
         <span *ngIf="authKey.length > 0">{{ authKey }}</span>
         <span *ngIf="authKey.length == 0">(Not logged in)</span>
       </div>
+    </base-card-body>
+  </base-card>
+</div>
+
+
+<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+  <base-card>
+    <base-card-title>
+      <h2 class="mdl-card__title-text">Connector types</h2>
+    </base-card-title>
+    <base-card-body>
+      <ul class="typeList">
+        <li *ngFor="let connectorType of connectorTypes">{{ connectorType }}</li>
+      </ul>
+      <div id="requestTypes">
+        <div>
+          <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="reqImplTypeString" value="" #reqImplTypeString
+                   (keyup.enter)="getRequirementImpl(reqImplTypeString.value)"/>
+            <label class="mdl-textfield__label" for="reqImplTypeString">API type string</label>
+          </div>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-teal"
+                  (click)="getRequirementImpl(reqImplTypeString.value)">Get Req Impl
+          </button>
+        </div>
+        <div>
+          <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="getSubTypesString" value="" #getSubTypesString
+                   (keyup.enter)="getSubTypes(getSubTypesString.value)"/>
+            <label class="mdl-textfield__label" for="getSubTypesString">API type string</label>
+          </div>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-teal"
+                  (click)="getSubTypes(getSubTypesString.value)">Get sub types
+          </button>
+        </div>
+      </div>
+
+    </base-card-body>
+  </base-card>
+</div>
+<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+  <base-card>
+    <base-card-title>
+      <h2 class="mdl-card__title-text">Requirement types</h2>
+    </base-card-title>
+    <base-card-body>
+      <ul class="typeList">
+        <li *ngFor="let inputType of requirementTypes?.input">{{ inputType }}</li>
+      </ul>
+      <ul class="typeList">
+        <li *ngFor="let outputType of requirementTypes?.output">{{ outputType }}</li>
+      </ul>
+      <ul class="typeList">
+        <li *ngFor="let parameterType of requirementTypes?.parameter">{{ parameterType }}</li>
+      </ul>
+    </base-card-body>
+  </base-card>
+</div>
+<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+  <base-card>
+    <base-card-title>
+      <h2 class="mdl-card__title-text">Plugin types</h2>
+    </base-card-title>
+    <base-card-body>
+      <ul class="typeList">
+        <li *ngFor="let pluginType of pluginTypes">{{ pluginType.name }} ({{pluginType.author}})</li>
+      </ul>
     </base-card-body>
   </base-card>
 </div>

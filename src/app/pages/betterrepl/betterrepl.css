@@ -4,12 +4,15 @@
 }
 
 #lastResponse {
-  font-size: 14pt !important;
+  font-size: 12pt !important;
   margin-top: 10px;
   padding: 5px;
   border: 1px solid dimgray;
   border-radius: 5px;
   margin-left: 0 !important;
+  word-break: break-all;
+  max-height: 85px;
+  overflow: scroll;
 }
 
 #authKey {
@@ -19,4 +22,14 @@
 
 #loginButtons button {
   margin-right: 5px;
+}
+
+.typeList {
+  margin-left: -20px;
+  font-size: 8pt;
+}
+
+#requestTypes > div > div {
+  margin-top: 0;
+  margin-bottom: 0;
 }
