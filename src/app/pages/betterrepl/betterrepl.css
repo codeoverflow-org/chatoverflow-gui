@@ -3,7 +3,7 @@
 
 }
 
-#lastResponse {
+#lastResponse, #instanceLog {
   font-size: 12pt !important;
   margin-top: 10px;
   padding: 5px;

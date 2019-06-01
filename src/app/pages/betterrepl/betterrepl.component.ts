@@ -15,7 +15,8 @@ import {
   ConnectorRef,
   CredentialsEntry,
   EncryptedKeyValuePair,
-  AuthKey
+  AuthKey,
+  PluginInstance
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
 
@@ -38,6 +39,9 @@ export class BetterREPLComponent extends UpgradableComponent {
   private pluginTypes: Array<PluginType>;
 
   private connectorKeys: Array<ConnectorKey>;
+  private pluginInstances: Array<PluginInstance>;
+
+  private instanceLogOutput: Array<string>;
 
   constructor(private configService: ConfigService, private typeService: TypeService,
               private connectorService: ConnectorService, private instanceService: InstanceService,
@@ -188,6 +192,40 @@ export class BetterREPLComponent extends UpgradableComponent {
 
   copyConnectorData(connectorKey: ConnectorKey) {
     // TODO: Implement correctly
+  }
+
+  getInstances() {
+    this.instanceService.getInstances().subscribe((response: Array<PluginInstance>) => {
+      this.pluginInstances = response;
+      this.logRequest("getInstances", true, JSON.stringify(response));
+    }, error => this.logGenericError("getInstances"));
+  }
+
+  startPlugin(instanceName: string) {
+    this.instanceService.startInstance({instanceName: instanceName}).subscribe((response: ResultMessage) => {
+      this.logResultMessage("startInstance", response);
+
+      if (response.success) {
+        this.getInstances();
+      }
+    }, error => this.logGenericError("startInstance"));
+  }
+
+  stopPlugin(instanceName: string) {
+    this.instanceService.stopInstance({instanceName: instanceName}).subscribe((response: ResultMessage) => {
+      this.logResultMessage("stopInstance", response);
+
+      if (response.success) {
+        this.getInstances();
+      }
+    }, error => this.logGenericError("stopInstance"));
+  }
+
+  getLog(instanceName: string) {
+    this.instanceService.getLog(instanceName).subscribe((response: Array<string>) => {
+      this.logRequest("getLog", true, JSON.stringify(response));
+      this.instanceLogOutput = response;
+    }, error => this.logGenericError("getLog"));
   }
 
 }
