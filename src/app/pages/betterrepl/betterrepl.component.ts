@@ -7,7 +7,12 @@ import {
   RequirementTypes,
   PluginType,
   APIAndSpecificType,
-  SubTypes
+  SubTypes,
+  ConnectorService,
+  InstanceService,
+  ConnectorKey,
+  ConnectorDetails,
+  ConnectorRef
 } from "chatoverflow-api";
 
 @Component({
@@ -28,7 +33,10 @@ export class BetterREPLComponent extends UpgradableComponent {
   private requirementTypes: RequirementTypes;
   private pluginTypes: Array<PluginType>;
 
-  constructor(private configService: ConfigService, private typeService: TypeService) {
+  private connectorKeys: Array<ConnectorKey>;
+
+  constructor(private configService: ConfigService, private typeService: TypeService,
+              private connectorService: ConnectorService, private instanceService: InstanceService) {
     super();
 
     this.requestTypes();
@@ -93,5 +101,43 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.typeService.getSubTypes(apiType).subscribe((response: SubTypes) => {
       this.logRequest("getSubTypes", response.subtypes.length > 0, JSON.stringify(response));
     }, error => this.logGenericError("getSubTypes"))
+  }
+
+  getRegisteredConnectors() {
+    // TODO: Update generated client, change key to array<key>
+    this.connectorService.getConnectors().subscribe((response: Array<ConnectorKey>) => {
+      this.logRequest("getConnectors", true, JSON.stringify(response));
+      this.connectorKeys = response;
+    }, error => this.logGenericError("getConnectors"));
+  }
+
+  manageConnectorGET(sourceIdentifier: string, connectorType: string) {
+    this.connectorService.getConnector(connectorType, sourceIdentifier).subscribe((response: ConnectorDetails) => {
+      this.logRequest("getConnector", response.found, JSON.stringify(response));
+    }, error => this.logGenericError("getConnector"));
+  }
+
+  manageConnectorPOST(sourceIdentifier: string, connectorType: string) {
+    let connectorRef: ConnectorRef = {
+      sourceIdentifier: sourceIdentifier,
+      uniqueTypeString: connectorType
+    };
+    this.connectorService.postConnector(connectorRef).subscribe((response: ResultMessage) => {
+      this.logResultMessage("postConnector", response);
+
+      if (response.success) {
+        this.getRegisteredConnectors();
+      }
+    }, error => this.logGenericError("postConnector"));
+  }
+
+  manageConnectorDELETE(sourceIdentifier: string, connectorType: string) {
+    this.connectorService.deleteConnector(connectorType, sourceIdentifier).subscribe((response: ResultMessage) => {
+      this.logResultMessage("deleteConnector", response);
+
+      if (response.success) {
+        this.getRegisteredConnectors();
+      }
+    }, error => this.logGenericError("deleteConnector"));
   }
 }

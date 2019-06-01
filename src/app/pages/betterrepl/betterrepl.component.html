@@ -109,3 +109,71 @@
     </base-card-body>
   </base-card>
 </div>
+
+
+<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--2-col-phone">
+  <base-card>
+    <base-card-title>
+      <h2 class="mdl-card__title-text">Connectors</h2>
+    </base-card-title>
+    <base-card-body>
+      <div>
+        <button class="mdl-button mdl-js-button mdl-js-ripple-effect button--colored-white"
+                (click)="getRegisteredConnectors()">
+          <i class="material-icons">refresh</i>
+          Refresh connectors
+        </button>
+      </div>
+      <ul>
+        <li *ngFor="let connectorKey of connectorKeys">{{connectorKey.sourceIdentifier}}
+          ({{connectorKey.qualifiedConnectorType}})
+        </li>
+      </ul>
+    </base-card-body>
+  </base-card>
+</div>
+<div class="mdl-cell mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+  <base-card>
+    <base-card-title>
+      <h2 class="mdl-card__title-text">Manage connectors</h2>
+    </base-card-title>
+    <base-card-body>
+      <div class="form">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageConnectorSourceIdentifier" value=""
+                 #mcSourceIdentifier/>
+          <label class="mdl-textfield__label" for="manageConnectorSourceIdentifier">Source identifier</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageConnectorConnectorType" value=""
+                 #mcConnectorType/>
+          <label class="mdl-textfield__label" for="manageConnectorConnectorType">Connector type</label>
+        </div>
+        <div class="manageButtons">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-light-blue"
+                  (click)="manageConnectorGET(mcSourceIdentifier.value, mcConnectorType.value)">
+            GET
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+                  (click)="manageConnectorPOST(mcSourceIdentifier.value, mcConnectorType.value)">
+            ADD
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+                  (click)="manageConnectorDELETE(mcSourceIdentifier.value, mcConnectorType.value)">
+            DELETE
+          </button>
+        </div>
+      </div>
+    </base-card-body>
+  </base-card>
+</div>
+<div class="mdl-cell mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+  <base-card>
+    <base-card-title>
+      <h2 class="mdl-card__title-text">Manage credentials</h2>
+    </base-card-title>
+    <base-card-body>
+
+    </base-card-body>
+  </base-card>
+</div>

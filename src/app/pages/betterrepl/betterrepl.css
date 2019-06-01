@@ -33,3 +33,7 @@
   margin-top: 0;
   margin-bottom: 0;
 }
+
+.manageButtons button {
+  margin-right: 10px;
+}
