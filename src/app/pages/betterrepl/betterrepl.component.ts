@@ -12,8 +12,12 @@ import {
   InstanceService,
   ConnectorKey,
   ConnectorDetails,
-  ConnectorRef
+  ConnectorRef,
+  CredentialsEntry,
+  EncryptedKeyValuePair,
+  AuthKey
 } from "chatoverflow-api";
+import {CryptoService} from "../../../crypto.service";
 
 @Component({
   selector: 'better-repl',
@@ -36,7 +40,8 @@ export class BetterREPLComponent extends UpgradableComponent {
   private connectorKeys: Array<ConnectorKey>;
 
   constructor(private configService: ConfigService, private typeService: TypeService,
-              private connectorService: ConnectorService, private instanceService: InstanceService) {
+              private connectorService: ConnectorService, private instanceService: InstanceService,
+              private cryptoService: CryptoService) {
     super();
 
     this.requestTypes();
@@ -104,7 +109,6 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getRegisteredConnectors() {
-    // TODO: Update generated client, change key to array<key>
     this.connectorService.getConnectors().subscribe((response: Array<ConnectorKey>) => {
       this.logRequest("getConnectors", true, JSON.stringify(response));
       this.connectorKeys = response;
@@ -140,4 +144,50 @@ export class BetterREPLComponent extends UpgradableComponent {
       }
     }, error => this.logGenericError("deleteConnector"));
   }
+
+  manageCredentialsGET(sourceIdentifier: string, connectorType: string, key: string) {
+    this.connectorService.getCredentialsEntry(key, connectorType, sourceIdentifier).subscribe((response: CredentialsEntry) => {
+      let encryptedResponse = response;
+      encryptedResponse.value = this.cryptoService.decrypt(response.value, this.authKey);
+
+      if (!response.found) {
+        this.logRequest("getCredentialsEntry", false, "");
+      } else if (encryptedResponse.value === null) {
+        this.logRequest("getCredentialsEntry", false, "Wrong auth key.");
+      } else {
+        this.logRequest("getCredentialsEntry", true, JSON.stringify(encryptedResponse));
+      }
+
+    }, error => this.logGenericError("getCredentialsEntry"));
+  }
+
+  manageCredentialsPOST(sourceIdentifier: string, connectorType: string, key: string, value: string) {
+    let encryptedValue = this.cryptoService.encrypt(value, this.authKey);
+
+    let kvPair: EncryptedKeyValuePair = {
+      key: key,
+      value: encryptedValue
+    };
+
+    this.connectorService.postCredentialsEntry(kvPair, connectorType, sourceIdentifier).subscribe((response: ResultMessage) => {
+      this.logResultMessage("postCredentialsEntry", response);
+    }, error => this.logGenericError("postCredentialsEntry"));
+  }
+
+  manageCredentialsDELETE(sourceIdentifier: string, connectorType: string, key: string) {
+    let authKeyBody: AuthKey = {
+      authKey: this.authKey
+    };
+
+    // TODO: Deleting is not possible right now due to DELETE-bodies not beeing evaluated. Should be in header (always)
+    this.connectorService.deleteCredentialsEntry(authKeyBody, key, connectorType, sourceIdentifier).subscribe(
+      (response: ResultMessage) => {
+        this.logResultMessage("deleteCredentialsEntry", response);
+      }, error => this.logGenericError("deleteCredentialsEntry"));
+  }
+
+  copyConnectorData(connectorKey: ConnectorKey) {
+    // TODO: Implement correctly
+  }
+
 }

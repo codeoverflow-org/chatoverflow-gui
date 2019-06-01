@@ -126,7 +126,13 @@
       </div>
       <ul>
         <li *ngFor="let connectorKey of connectorKeys">{{connectorKey.sourceIdentifier}}
-          ({{connectorKey.qualifiedConnectorType}})
+          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-orange"
+                  (click)="copyConnectorData(connectorKey)" disabled>
+            <i class="material-icons">edit</i>
+          </button>
+          <ul>
+            <li>{{connectorKey.qualifiedConnectorType}}</li>
+          </ul>
         </li>
       </ul>
     </base-card-body>
@@ -173,7 +179,43 @@
       <h2 class="mdl-card__title-text">Manage credentials</h2>
     </base-card-title>
     <base-card-body>
-
+      <div class="form">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageCredentialsSourceIdentifier" value=""
+                 #mcrSourceIdentifier/>
+          <label class="mdl-textfield__label" for="manageCredentialsSourceIdentifier">Source identifier</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageCredentialsConnectorType" value=""
+                 #mcrConnectorType/>
+          <label class="mdl-textfield__label" for="manageCredentialsConnectorType">Connector type</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageCredentialsKey" value=""
+                 #mcrKey/>
+          <label class="mdl-textfield__label" for="manageCredentialsKey">Key</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageCredentialsValue" value=""
+                 #mcrValue/>
+          <label class="mdl-textfield__label" for="manageCredentialsValue">Value</label>
+        </div>
+        <div class="manageButtons">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-light-blue"
+                  (click)="manageCredentialsGET(mcrSourceIdentifier.value, mcrConnectorType.value, mcrKey.value)">
+            GET
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+                  (click)="manageCredentialsPOST(mcrSourceIdentifier.value, mcrConnectorType.value,
+                  mcrKey.value, mcrValue.value)">
+            ADD
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red" disabled
+                  (click)="manageCredentialsDELETE(mcrSourceIdentifier.value, mcrConnectorType.value, mcrKey.value)">
+            DELETE
+          </button>
+        </div>
+      </div>
     </base-card-body>
   </base-card>
 </div>
