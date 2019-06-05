@@ -284,7 +284,33 @@
       <h2 class="mdl-card__title-text">Create / Delete instance</h2>
     </base-card-title>
     <base-card-body>
-
+      <div class="form">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageInstancePluginName" value=""
+                 #miPluginName/>
+          <label class="mdl-textfield__label" for="manageInstancePluginName">Plugin name</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageInstancePluginAuthor" value=""
+                 #miPluginAuthor/>
+          <label class="mdl-textfield__label" for="manageInstancePluginAuthor">Plugin author</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="manageInstanceInstanceName" value=""
+                 #miInstanceName/>
+          <label class="mdl-textfield__label" for="manageInstanceInstanceName">Instance name</label>
+        </div>
+      </div>
+      <div class="manageButtons">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+                (click)="createPluginInstance(miInstanceName.value, miPluginName.value, miPluginAuthor.value)">
+          CREATE
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+                (click)="deletePluginInstance(miInstanceName.value)">
+          DELETE
+        </button>
+      </div>
     </base-card-body>
   </base-card>
 </div>
@@ -294,7 +320,27 @@
       <h2 class="mdl-card__title-text">Instance requirements</h2>
     </base-card-title>
     <base-card-body>
-
+      <div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="requirementsInstanceName" value=""
+                 #requirementsInstanceName
+                 (keyup.enter)="getRequirements(requirementsInstanceName.value)"/>
+          <label class="mdl-textfield__label" for="requirementsInstanceName">Instance name</label>
+        </div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-teal"
+                (click)="getRequirements(requirementsInstanceName.value)">Show requirements
+        </button>
+      </div>
+      <ul>
+        <li *ngFor="let requirement of instanceRequirements">
+          {{requirement.uniqueRequirementId}} ({{requirement.name}})
+          <ul>
+            <li>optional: {{requirement.isOptional}} - set: {{requirement.isSet}}</li>
+            <li>type: {{requirement.targetType}}</li>
+            <li>value: {{requirement.value}}</li>
+          </ul>
+        </li>
+      </ul>
     </base-card-body>
   </base-card>
 </div>
@@ -304,7 +350,36 @@
       <h2 class="mdl-card__title-text">Change requirement</h2>
     </base-card-title>
     <base-card-body>
+      <div class="form">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="changeReqInstanceName" value=""
+                 #changeReqInstanceName/>
+          <label class="mdl-textfield__label" for="changeReqInstanceName">Instance name</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="changeReqID" value=""
+                 #changeReqID/>
+          <label class="mdl-textfield__label" for="changeReqID">Requirement ID</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="changeReqType" value=""
+                 #changeReqType/>
+          <label class="mdl-textfield__label" for="changeReqType">Target type</label>
+        </div>
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="changeReqValue" value=""
+                 #changeReqValue/>
+          <label class="mdl-textfield__label" for="changeReqValue">Value</label>
+        </div>
 
+      <div class="manageButtons">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+                (click)="setRequirement(changeReqInstanceName.value, changeReqID.value,
+               changeReqType.value, changeReqValue.value)">
+          PUT
+        </button>
+      </div>
+      </div>
     </base-card-body>
   </base-card>
 </div>

@@ -16,7 +16,7 @@ import {
   CredentialsEntry,
   EncryptedKeyValuePair,
   AuthKey,
-  PluginInstance
+  PluginInstance, PluginInstanceRef, Requirement, RequirementInfo
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
 
@@ -42,6 +42,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private pluginInstances: Array<PluginInstance>;
 
   private instanceLogOutput: Array<string>;
+  private instanceRequirements: Array<Requirement>;
 
   constructor(private configService: ConfigService, private typeService: TypeService,
               private connectorService: ConnectorService, private instanceService: InstanceService,
@@ -226,6 +227,45 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logRequest("getLog", true, JSON.stringify(response));
       this.instanceLogOutput = response;
     }, error => this.logGenericError("getLog"));
+  }
+
+  createPluginInstance(instanceName: string, pluginName: string, pluginAuthor: string) {
+    let instanceRef: PluginInstanceRef = {
+      instanceName: instanceName,
+      pluginName: pluginName,
+      pluginAuthor: pluginAuthor
+    };
+
+    this.instanceService.postInstance(instanceRef).subscribe((response: ResultMessage) => {
+      this.logResultMessage("postInstance", response);
+      this.getInstances();
+    }, error => this.logGenericError("postInstance"));
+  }
+
+  // TODO: Fix REST documentation
+  deletePluginInstance(instanceName: string) {
+    this.instanceService.deleteInstance(instanceName).subscribe((response: ResultMessage) => {
+      this.logResultMessage("deleteInstance", response);
+      this.getInstances();
+    }, error => this.logGenericError("deleteInstance"));
+  }
+
+  getRequirements(instanceName: string) {
+    this.instanceService.getRequirements(instanceName).subscribe((response: Array<Requirement>) => {
+      this.instanceRequirements = response;
+      this.logRequest("getRequirements", true, JSON.stringify(response));
+    }, error => this.logGenericError("getRequirements"));
+  }
+
+  setRequirement(instanceName: string, requirementId: string, targetType: string, value: string) {
+    let info: RequirementInfo = {
+      targetType: targetType,
+      value: value
+    };
+
+    this.instanceService.putRequirement(info, requirementId, instanceName).subscribe((response: ResultMessage) => {
+      this.logResultMessage("putRequirement", response);
+    }, error => this.logGenericError("putRequirement"));
   }
 
 }
