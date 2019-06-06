@@ -15,8 +15,10 @@ import {
   ConnectorRef,
   CredentialsEntry,
   EncryptedKeyValuePair,
-  AuthKey,
-  PluginInstance, PluginInstanceRef, Requirement, RequirementInfo
+  PluginInstance,
+  PluginInstanceRef,
+  Requirement,
+  RequirementInfo
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
 
@@ -48,22 +50,20 @@ export class BetterREPLComponent extends UpgradableComponent {
               private connectorService: ConnectorService, private instanceService: InstanceService,
               private cryptoService: CryptoService) {
     super();
-
-    this.requestTypes();
   }
 
   requestTypes() {
-    this.typeService.getConnectorType().subscribe((response: Array<string>) => {
+    this.typeService.getConnectorType(this.authKey).subscribe((response: Array<string>) => {
       this.logRequest("getConnectorType", true, JSON.stringify(response));
       this.connectorTypes = response;
     }, error => this.logGenericError("getConnectorType"));
 
-    this.typeService.getRequirementType().subscribe((response: RequirementTypes) => {
+    this.typeService.getRequirementType(this.authKey).subscribe((response: RequirementTypes) => {
       this.logRequest("getRequirementType", true, JSON.stringify(response));
       this.requirementTypes = response
     }, error => this.logGenericError("getRequirementType"));
 
-    this.typeService.getPlugin().subscribe((response: Array<PluginType>) => {
+    this.typeService.getPlugin(this.authKey).subscribe((response: Array<PluginType>) => {
       this.logRequest("getPlugin", true, JSON.stringify(response));
       this.pluginTypes = response;
     }, error => this.logGenericError("getPlugin"));
@@ -88,6 +88,7 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logResultMessage("postLogin", response);
       if (response.success) {
         this.authKey = response.message;
+        this.requestTypes();
       }
     }, error => this.logGenericError("postLogin"));
   }
@@ -97,31 +98,32 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logResultMessage("postRegister", response);
       if (response.success) {
         this.authKey = response.message;
+        this.requestTypes();
       }
     }, error => this.logGenericError("postRegister"));
   }
 
   getRequirementImpl(apiType: string) {
-    this.typeService.getReqImpl(apiType).subscribe((response: APIAndSpecificType) => {
+    this.typeService.getReqImpl(apiType, this.authKey).subscribe((response: APIAndSpecificType) => {
       this.logRequest("getReqImpl", response.found, JSON.stringify(response));
     }, error => this.logGenericError("getReqImpl"));
   }
 
   getSubTypes(apiType: string) {
-    this.typeService.getSubTypes(apiType).subscribe((response: SubTypes) => {
+    this.typeService.getSubTypes(apiType, this.authKey).subscribe((response: SubTypes) => {
       this.logRequest("getSubTypes", response.subtypes.length > 0, JSON.stringify(response));
     }, error => this.logGenericError("getSubTypes"))
   }
 
   getRegisteredConnectors() {
-    this.connectorService.getConnectors().subscribe((response: Array<ConnectorKey>) => {
+    this.connectorService.getConnectors(this.authKey).subscribe((response: Array<ConnectorKey>) => {
       this.logRequest("getConnectors", true, JSON.stringify(response));
       this.connectorKeys = response;
     }, error => this.logGenericError("getConnectors"));
   }
 
   manageConnectorGET(sourceIdentifier: string, connectorType: string) {
-    this.connectorService.getConnector(connectorType, sourceIdentifier).subscribe((response: ConnectorDetails) => {
+    this.connectorService.getConnector(connectorType, sourceIdentifier, this.authKey).subscribe((response: ConnectorDetails) => {
       this.logRequest("getConnector", response.found, JSON.stringify(response));
     }, error => this.logGenericError("getConnector"));
   }
@@ -131,7 +133,7 @@ export class BetterREPLComponent extends UpgradableComponent {
       sourceIdentifier: sourceIdentifier,
       uniqueTypeString: connectorType
     };
-    this.connectorService.postConnector(connectorRef).subscribe((response: ResultMessage) => {
+    this.connectorService.postConnector(connectorRef, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("postConnector", response);
 
       if (response.success) {
@@ -141,7 +143,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   manageConnectorDELETE(sourceIdentifier: string, connectorType: string) {
-    this.connectorService.deleteConnector(connectorType, sourceIdentifier).subscribe((response: ResultMessage) => {
+    this.connectorService.deleteConnector(connectorType, sourceIdentifier, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("deleteConnector", response);
 
       if (response.success) {
@@ -151,7 +153,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   manageCredentialsGET(sourceIdentifier: string, connectorType: string, key: string) {
-    this.connectorService.getCredentialsEntry(key, connectorType, sourceIdentifier).subscribe((response: CredentialsEntry) => {
+    this.connectorService.getCredentialsEntry(key, connectorType, sourceIdentifier, this.authKey).subscribe((response: CredentialsEntry) => {
       let encryptedResponse = response;
       encryptedResponse.value = this.cryptoService.decrypt(response.value, this.authKey);
 
@@ -174,18 +176,13 @@ export class BetterREPLComponent extends UpgradableComponent {
       value: encryptedValue
     };
 
-    this.connectorService.postCredentialsEntry(kvPair, connectorType, sourceIdentifier).subscribe((response: ResultMessage) => {
+    this.connectorService.postCredentialsEntry(kvPair, connectorType, sourceIdentifier, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("postCredentialsEntry", response);
     }, error => this.logGenericError("postCredentialsEntry"));
   }
 
   manageCredentialsDELETE(sourceIdentifier: string, connectorType: string, key: string) {
-    let authKeyBody: AuthKey = {
-      authKey: this.authKey
-    };
-
-    // TODO: Deleting is not possible right now due to DELETE-bodies not beeing evaluated. Should be in header (always)
-    this.connectorService.deleteCredentialsEntry(authKeyBody, key, connectorType, sourceIdentifier).subscribe(
+    this.connectorService.deleteCredentialsEntry(key, connectorType, sourceIdentifier, this.authKey).subscribe(
       (response: ResultMessage) => {
         this.logResultMessage("deleteCredentialsEntry", response);
       }, error => this.logGenericError("deleteCredentialsEntry"));
@@ -196,14 +193,14 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getInstances() {
-    this.instanceService.getInstances().subscribe((response: Array<PluginInstance>) => {
+    this.instanceService.getInstances(this.authKey).subscribe((response: Array<PluginInstance>) => {
       this.pluginInstances = response;
       this.logRequest("getInstances", true, JSON.stringify(response));
     }, error => this.logGenericError("getInstances"));
   }
 
   startPlugin(instanceName: string) {
-    this.instanceService.startInstance({instanceName: instanceName}).subscribe((response: ResultMessage) => {
+    this.instanceService.startInstance({instanceName: instanceName}, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("startInstance", response);
 
       if (response.success) {
@@ -213,7 +210,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   stopPlugin(instanceName: string) {
-    this.instanceService.stopInstance({instanceName: instanceName}).subscribe((response: ResultMessage) => {
+    this.instanceService.stopInstance({instanceName: instanceName}, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("stopInstance", response);
 
       if (response.success) {
@@ -223,7 +220,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getLog(instanceName: string) {
-    this.instanceService.getLog(instanceName).subscribe((response: Array<string>) => {
+    this.instanceService.getLog(instanceName, this.authKey).subscribe((response: Array<string>) => {
       this.logRequest("getLog", true, JSON.stringify(response));
       this.instanceLogOutput = response;
     }, error => this.logGenericError("getLog"));
@@ -236,22 +233,21 @@ export class BetterREPLComponent extends UpgradableComponent {
       pluginAuthor: pluginAuthor
     };
 
-    this.instanceService.postInstance(instanceRef).subscribe((response: ResultMessage) => {
+    this.instanceService.postInstance(instanceRef, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("postInstance", response);
       this.getInstances();
     }, error => this.logGenericError("postInstance"));
   }
 
-  // TODO: Fix REST documentation
   deletePluginInstance(instanceName: string) {
-    this.instanceService.deleteInstance(instanceName).subscribe((response: ResultMessage) => {
+    this.instanceService.deleteInstance(instanceName, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("deleteInstance", response);
       this.getInstances();
     }, error => this.logGenericError("deleteInstance"));
   }
 
   getRequirements(instanceName: string) {
-    this.instanceService.getRequirements(instanceName).subscribe((response: Array<Requirement>) => {
+    this.instanceService.getRequirements(instanceName, this.authKey).subscribe((response: Array<Requirement>) => {
       this.instanceRequirements = response;
       this.logRequest("getRequirements", true, JSON.stringify(response));
     }, error => this.logGenericError("getRequirements"));
@@ -263,7 +259,7 @@ export class BetterREPLComponent extends UpgradableComponent {
       value: value
     };
 
-    this.instanceService.putRequirement(info, requirementId, instanceName).subscribe((response: ResultMessage) => {
+    this.instanceService.putRequirement(info, requirementId, instanceName, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("putRequirement", response);
     }, error => this.logGenericError("putRequirement"));
   }

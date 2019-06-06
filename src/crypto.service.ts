@@ -29,7 +29,7 @@ export class CryptoService {
    * @returns {any} the decrypted string or null if the integrity check fails
    */
   decrypt(ciphertext: string, password: string): string {
-    let decrypted = crypto.AES.decrypt(ciphertext, password).toString(crypto.enc.Utf8);
+    let decrypted: string = crypto.AES.decrypt(ciphertext, password).toString(crypto.enc.Utf8);
 
     if (!decrypted.startsWith("CHECK")) {
       return null;
