@@ -46,6 +46,22 @@ export class BetterREPLComponent extends UpgradableComponent {
   private instanceLogOutput: Array<string>;
   private instanceRequirements: Array<Requirement>;
 
+  private mcSourceIdentifierValue = "";
+  private mcConnectorTypeValue = "";
+  private mcrSourceIdentifierValue = "";
+  private mcrConnectorTypeValue = "";
+
+  private instanceNameSSValue = "";
+  private miPluginNameValue = "";
+  private miPluginAuthorValue = "";
+  private miInstanceNameValue = "";
+  private requirementsInstanceNameValue = "";
+
+  private changeReqInstanceNameValue = "";
+  private changeReqIDValue = "";
+  private changeReqTypeValue = "";
+  private changeReqValueValue = "";
+
   constructor(private configService: ConfigService, private typeService: TypeService,
               private connectorService: ConnectorService, private instanceService: InstanceService,
               private cryptoService: CryptoService) {
@@ -189,7 +205,10 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   copyConnectorData(connectorKey: ConnectorKey) {
-    // TODO: Implement correctly
+    this.mcSourceIdentifierValue = connectorKey.sourceIdentifier;
+    this.mcrSourceIdentifierValue = connectorKey.sourceIdentifier;
+    this.mcConnectorTypeValue = connectorKey.qualifiedConnectorType;
+    this.mcrConnectorTypeValue = connectorKey.qualifiedConnectorType;
   }
 
   getInstances() {
@@ -235,14 +254,18 @@ export class BetterREPLComponent extends UpgradableComponent {
 
     this.instanceService.postInstance(instanceRef, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("postInstance", response);
-      this.getInstances();
+      if (response.success) {
+        this.getInstances();
+      }
     }, error => this.logGenericError("postInstance"));
   }
 
   deletePluginInstance(instanceName: string) {
     this.instanceService.deleteInstance(instanceName, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("deleteInstance", response);
-      this.getInstances();
+      if (response.success) {
+        this.getInstances();
+      }
     }, error => this.logGenericError("deleteInstance"));
   }
 
@@ -262,6 +285,21 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.instanceService.putRequirement(info, requirementId, instanceName, this.authKey).subscribe((response: ResultMessage) => {
       this.logResultMessage("putRequirement", response);
     }, error => this.logGenericError("putRequirement"));
+  }
+
+  copyInstanceData(instance: PluginInstance) {
+    this.instanceNameSSValue = instance.instanceName;
+    this.miPluginNameValue = instance.pluginName;
+    this.miPluginAuthorValue = instance.pluginAuthor;
+    this.miInstanceNameValue = instance.instanceName;
+    this.requirementsInstanceNameValue = instance.instanceName;
+  }
+
+  copyRequirementData(requirement: Requirement, instanceName: string) {
+    this.changeReqInstanceNameValue = instanceName;
+    this.changeReqIDValue = requirement.uniqueRequirementId;
+    this.changeReqTypeValue = requirement.targetType;
+    this.changeReqValueValue = requirement.value;
   }
 
 }

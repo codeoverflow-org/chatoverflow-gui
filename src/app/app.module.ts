@@ -7,6 +7,7 @@ import {ApiModule} from "chatoverflow-api";
 import {HttpClientModule} from "@angular/common/http";
 import {BetterREPLComponent} from "./pages/betterrepl/betterrepl.component";
 import {ThemeModule} from "../theme/theme.module";
+import {ReactiveFormsModule, FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [AppComponent, BetterREPLComponent],
@@ -16,7 +17,9 @@ import {ThemeModule} from "../theme/theme.module";
     DashboardModule,
     HttpClientModule,
     ApiModule,
-    ThemeModule
+    ThemeModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

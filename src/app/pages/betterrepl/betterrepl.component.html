@@ -126,8 +126,8 @@
       </div>
       <ul>
         <li *ngFor="let connectorKey of connectorKeys">{{connectorKey.sourceIdentifier}}
-          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-orange"
-                  (click)="copyConnectorData(connectorKey)" disabled>
+          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-teal"
+                  (click)="copyConnectorData(connectorKey)">
             <i class="material-icons">edit</i>
           </button>
           <ul>
@@ -145,14 +145,16 @@
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="mcSourceIdentifierValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageConnectorSourceIdentifier" value=""
-                 #mcSourceIdentifier/>
+                 #mcSourceIdentifier [(ngModel)]="mcSourceIdentifierValue"/>
           <label class="mdl-textfield__label" for="manageConnectorSourceIdentifier">Source identifier</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="mcConnectorTypeValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageConnectorConnectorType" value=""
-                 #mcConnectorType/>
+                 #mcConnectorType [(ngModel)]="mcConnectorTypeValue"/>
           <label class="mdl-textfield__label" for="manageConnectorConnectorType">Connector type</label>
         </div>
         <div class="manageButtons">
@@ -180,14 +182,16 @@
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="mcrSourceIdentifierValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsSourceIdentifier" value=""
-                 #mcrSourceIdentifier/>
+                 #mcrSourceIdentifier [(ngModel)]="mcrSourceIdentifierValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsSourceIdentifier">Source identifier</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="mcrConnectorTypeValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsConnectorType" value=""
-                 #mcrConnectorType/>
+                 #mcrConnectorType [(ngModel)]="mcrConnectorTypeValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsConnectorType">Connector type</label>
         </div>
         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -210,7 +214,7 @@
                   mcrKey.value, mcrValue.value)">
             ADD
           </button>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red" disabled
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
                   (click)="manageCredentialsDELETE(mcrSourceIdentifier.value, mcrConnectorType.value, mcrKey.value)">
             DELETE
           </button>
@@ -238,6 +242,12 @@
         <li *ngFor="let instance of pluginInstances">
           <span class="color-text--orange" *ngIf="!instance.isRunning">{{ instance.instanceName }}</span>
           <span class="color-text--green" *ngIf="instance.isRunning">{{ instance.instanceName }}</span>
+          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect"
+                  [class.button--colored-orange]="!instance.isRunning"
+                  [class.button--colored-green]="instance.isRunning"
+                  (click)="copyInstanceData(instance)">
+            <i class="material-icons">edit</i>
+          </button>
           <ul>
             <li>{{ instance.pluginName }} ({{ instance.pluginAuthor }})</li>
             <li>{{ instance.requirementIDs }}</li>
@@ -254,9 +264,10 @@
     </base-card-title>
     <base-card-body>
       <div class="manageButtons">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="instanceNameSSValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="instanceNameSS" value=""
-                 #instanceNameSS/>
+                 #instanceNameSS [(ngModel)]="instanceNameSSValue"/>
           <label class="mdl-textfield__label" for="instanceNameSS">Instance Name</label>
         </div>
 
@@ -285,19 +296,22 @@
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="miPluginNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageInstancePluginName" value=""
-                 #miPluginName/>
+                 #miPluginName [(ngModel)]="miPluginNameValue">
           <label class="mdl-textfield__label" for="manageInstancePluginName">Plugin name</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="miPluginAuthorValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageInstancePluginAuthor" value=""
-                 #miPluginAuthor/>
+                 #miPluginAuthor [(ngModel)]="miPluginAuthorValue"/>
           <label class="mdl-textfield__label" for="manageInstancePluginAuthor">Plugin author</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="miInstanceNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageInstanceInstanceName" value=""
-                 #miInstanceName/>
+                 #miInstanceName [(ngModel)]="miInstanceNameValue"/>
           <label class="mdl-textfield__label" for="manageInstanceInstanceName">Instance name</label>
         </div>
       </div>
@@ -321,9 +335,10 @@
     </base-card-title>
     <base-card-body>
       <div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="requirementsInstanceNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="requirementsInstanceName" value=""
-                 #requirementsInstanceName
+                 #requirementsInstanceName [(ngModel)]="requirementsInstanceNameValue"
                  (keyup.enter)="getRequirements(requirementsInstanceName.value)"/>
           <label class="mdl-textfield__label" for="requirementsInstanceName">Instance name</label>
         </div>
@@ -334,6 +349,10 @@
       <ul>
         <li *ngFor="let requirement of instanceRequirements">
           {{requirement.uniqueRequirementId}} ({{requirement.name}})
+          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-teal"
+                  (click)="copyRequirementData(requirement, requirementsInstanceName.value)">
+            <i class="material-icons">edit</i>
+          </button>
           <ul>
             <li>optional: {{requirement.isOptional}} - set: {{requirement.isSet}}</li>
             <li>type: {{requirement.targetType}}</li>
@@ -351,24 +370,28 @@
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="changeReqInstanceNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqInstanceName" value=""
-                 #changeReqInstanceName/>
+                 #changeReqInstanceName [(ngModel)]="changeReqInstanceNameValue"/>
           <label class="mdl-textfield__label" for="changeReqInstanceName">Instance name</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="changeReqIDValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqID" value=""
-                 #changeReqID/>
+                 #changeReqID [(ngModel)]="changeReqIDValue"/>
           <label class="mdl-textfield__label" for="changeReqID">Requirement ID</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="changeReqTypeValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqType" value=""
-                 #changeReqType/>
+                 #changeReqType [(ngModel)]="changeReqTypeValue"/>
           <label class="mdl-textfield__label" for="changeReqType">Target type</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+             [class.is-dirty]="changeReqValueValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqValue" value=""
-                 #changeReqValue/>
+                 #changeReqValue [(ngModel)]="changeReqValueValue"/>
           <label class="mdl-textfield__label" for="changeReqValue">Value</label>
         </div>
 
