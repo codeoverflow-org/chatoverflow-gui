@@ -287,6 +287,12 @@ export class BetterREPLComponent extends UpgradableComponent {
     }, error => this.logGenericError("putRequirement"));
   }
 
+  removeRequirement(instanceName: string, requirementId: string) {
+    this.instanceService.deleteRequirement(requirementId, instanceName, this.authKey).subscribe((response: ResultMessage) => {
+      this.logResultMessage("deleteRequirement", response);
+    }, error => this.logGenericError("deleteRequirement"));
+  }
+
   copyInstanceData(instance: PluginInstance) {
     this.instanceNameSSValue = instance.instanceName;
     this.miPluginNameValue = instance.pluginName;
