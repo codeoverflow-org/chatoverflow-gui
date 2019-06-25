@@ -18,7 +18,8 @@ import {
   PluginInstance,
   PluginInstanceRef,
   Requirement,
-  RequirementInfo
+  RequirementInfo,
+  PluginLogMessageDTO
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
 
@@ -239,9 +240,9 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getLog(instanceName: string) {
-    this.instanceService.getLog(instanceName, this.authKey).subscribe((response: Array<string>) => {
+    this.instanceService.getLog(instanceName, this.authKey).subscribe((response: Array<PluginLogMessageDTO>) => {
       this.logRequest("getLog", true, JSON.stringify(response));
-      this.instanceLogOutput = response;
+      this.instanceLogOutput = response.map(entry => `${entry.message} (${entry.timestamp})`);
     }, error => this.logGenericError("getLog"));
   }
 
