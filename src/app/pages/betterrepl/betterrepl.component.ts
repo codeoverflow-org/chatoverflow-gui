@@ -22,6 +22,7 @@ import {
   PluginLogMessageDTO
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
+import {interval} from "rxjs";
 
 @Component({
   selector: 'better-repl',
@@ -36,6 +37,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private lastRequestSuccessful = true;
 
   private authKey = "";
+  private lastPassword = "";
 
   private connectorTypes: Array<string>;
   private requirementTypes: RequirementTypes;
@@ -63,13 +65,58 @@ export class BetterREPLComponent extends UpgradableComponent {
   private changeReqTypeValue = "";
   private changeReqValueValue = "";
 
+  private pingpongCounter = interval(5000);
+  private pingpongStarted = false;
+  private pingPongSubscriber = null;
+
   constructor(private configService: ConfigService, private typeService: TypeService,
               private connectorService: ConnectorService, private instanceService: InstanceService,
               private cryptoService: CryptoService) {
     super();
   }
 
+  reloadEverything(clearForms: boolean) {
+    if (clearForms) {
+      this.authKey = "";
+      this.instanceLogOutput = [];
+      this.instanceRequirements = [];
+
+      this.mcSourceIdentifierValue = "";
+      this.mcConnectorTypeValue = "";
+      this.mcrSourceIdentifierValue = "";
+      this.mcrConnectorTypeValue = "";
+
+      this.instanceNameSSValue = "";
+      this.miPluginNameValue = "";
+      this.miPluginAuthorValue = "";
+      this.miInstanceNameValue = "";
+      this.requirementsInstanceNameValue = "";
+
+      this.changeReqInstanceNameValue = "";
+      this.changeReqIDValue = "";
+      this.changeReqTypeValue = "";
+      this.changeReqValueValue = "";
+
+      this.connectorTypes = [];
+      this.requirementTypes = null;
+      this.pluginTypes = [];
+      this.pluginInstances = [];
+      this.connectorKeys = [];
+
+    } else {
+
+      this.requestTypes();
+      this.getRegisteredConnectors();
+      this.getInstances();
+    }
+
+  }
+
   requestTypes() {
+    this.connectorTypes = [];
+    this.requirementTypes = null;
+    this.pluginTypes = [];
+
     this.typeService.getConnectorType(this.authKey).subscribe((response: Array<string>) => {
       this.logRequest("getConnectorType", true, JSON.stringify(response));
       this.connectorTypes = response;
@@ -77,7 +124,7 @@ export class BetterREPLComponent extends UpgradableComponent {
 
     this.typeService.getRequirementType(this.authKey).subscribe((response: RequirementTypes) => {
       this.logRequest("getRequirementType", true, JSON.stringify(response));
-      this.requirementTypes = response
+      this.requirementTypes = response;
     }, error => this.logGenericError("getRequirementType"));
 
     this.typeService.getPlugin(this.authKey).subscribe((response: Array<PluginType>) => {
@@ -105,9 +152,46 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logResultMessage("postLogin", response);
       if (response.success) {
         this.authKey = response.message;
-        this.requestTypes();
+        this.lastPassword = password;
       }
-    }, error => this.logGenericError("postLogin"));
+      this.reloadEverything(!response.success);
+      this.handlePingpong(true);
+    }, error => {
+      this.logGenericError("postLogin");
+      this.reloadEverything(true);
+    });
+  }
+
+  handlePingpong(start: boolean) {
+    if (start) {
+      if (!this.pingpongStarted) {
+        this.pingPongSubscriber = this.pingpongCounter.subscribe(n => this.pingpong());
+        this.pingpongStarted = true;
+      }
+    } else {
+      if (this.pingPongSubscriber != null) {
+        this.pingPongSubscriber.unsubscribe();
+      }
+      this.pingpongStarted = false;
+    }
+  }
+
+  pingpong() {
+    this.configService.postPing(this.authKey).subscribe((response: ResultMessage) => {
+      if (response.success) {
+        // Pong
+      } else {
+        this.reloadEverything(true);
+      }
+    }, error => {
+      if (error.status == 401 || error.status == 400) {
+        // Try to login again
+        this.login(this.lastPassword);
+
+      } else if (error.status == 0) {
+        this.reloadEverything(true);
+      }
+    })
   }
 
   register(password: string) {
@@ -115,9 +199,14 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logResultMessage("postRegister", response);
       if (response.success) {
         this.authKey = response.message;
-        this.requestTypes();
+        this.reloadEverything(false);
       }
-    }, error => this.logGenericError("postRegister"));
+      this.reloadEverything(!response.success);
+      this.handlePingpong(true);
+    }, error => {
+      this.logGenericError("postRegister");
+      this.reloadEverything(true);
+    });
   }
 
   getRequirementImpl(apiType: string) {
@@ -133,6 +222,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getRegisteredConnectors() {
+    this.connectorKeys = [];
     this.connectorService.getConnectors(this.authKey).subscribe((response: Array<ConnectorKey>) => {
       this.logRequest("getConnectors", true, JSON.stringify(response));
       this.connectorKeys = response;
@@ -213,6 +303,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getInstances() {
+    this.pluginInstances = [];
     this.instanceService.getInstances(this.authKey).subscribe((response: Array<PluginInstance>) => {
       this.pluginInstances = response;
       this.logRequest("getInstances", true, JSON.stringify(response));
