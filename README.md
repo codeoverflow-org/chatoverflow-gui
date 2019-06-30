@@ -21,4 +21,4 @@ npm install
 npm start
 ```
 
-Then, start the framework and navigate to (default) [http://localhost:4200](http://localhost:4200).
+Then, start the framework and navigate to (default) [http://localhost:2400](http://localhost:2400).
