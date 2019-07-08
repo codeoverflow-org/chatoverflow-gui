@@ -1,4 +1,4 @@
-import {Component, HostBinding} from "@angular/core";
+import {Component, HostBinding, ViewChild, ElementRef} from "@angular/core";
 import {UpgradableComponent} from "theme/components/upgradable";
 import {
   ResultMessage,
@@ -22,7 +22,10 @@ import {
   PluginLogMessageDTO
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
-import {interval} from "rxjs";
+
+interface PluginInstanceWithLog extends PluginInstance {
+  log?: string[];
+}
 
 @Component({
   selector: 'better-repl',
@@ -31,6 +34,7 @@ import {interval} from "rxjs";
 })
 export class BetterREPLComponent extends UpgradableComponent {
   @HostBinding('class.mdl-grid') private readonly mdlGrid = true;
+  @ViewChild('instanceLog') private readonly instanceLog: ElementRef<HTMLDivElement>;
 
   private lastRequestCommand = "...";
   private lastRequestMessage = "Please send a request to the server...";
@@ -44,7 +48,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private pluginTypes: Array<PluginType>;
 
   private connectorKeys: Array<ConnectorKey>;
-  private pluginInstances: Array<PluginInstance>;
+  private pluginInstances: Array<PluginInstanceWithLog>;
 
   private instanceLogOutput: Array<string>;
   private instanceRequirements: Array<Requirement>;
@@ -65,9 +69,8 @@ export class BetterREPLComponent extends UpgradableComponent {
   private changeReqTypeValue = "";
   private changeReqValueValue = "";
 
-  private pingpongCounter = interval(5000);
-  private pingpongStarted = false;
-  private pingPongSubscriber = null;
+  private eventsStarted = false;
+  private eventSource: EventSource = null;
 
   constructor(private configService: ConfigService, private typeService: TypeService,
               private connectorService: ConnectorService, private instanceService: InstanceService,
@@ -155,43 +158,72 @@ export class BetterREPLComponent extends UpgradableComponent {
         this.lastPassword = password;
       }
       this.reloadEverything(!response.success);
-      this.handlePingpong(true);
+      this.handleEvents(true);
     }, error => {
       this.logGenericError("postLogin");
       this.reloadEverything(true);
     });
   }
 
-  handlePingpong(start: boolean) {
+  handleEvents(start: boolean) {
+    if (!("EventSource" in window)) {
+      console.warn("Event source is not supported");
+      return;
+    }
+
     if (start) {
-      if (!this.pingpongStarted) {
-        this.pingPongSubscriber = this.pingpongCounter.subscribe(n => this.pingpong());
-        this.pingpongStarted = true;
+      if (!this.eventsStarted) {
+        //todo find a better way to get the basePath
+        this.eventSource = new EventSource(`${this.configService["basePath"]}/events?authKey=${this.authKey}`);
+        this.eventSource.onerror = () => {
+          console.log("Lost connection. Trying to reconnect...");
+          setTimeout(() => this.login(this.lastPassword), 1000);
+        };
+        this.eventSource.addEventListener("instance", (e: MessageEvent) => {
+          const { name, action, data } = JSON.parse(e.data) as { name: string, action: string, data?: { message: string, timestamp: string } };
+          const instance = this.pluginInstances.find(i => i.instanceName === name);
+          if (!instance)
+            return;
+          
+          switch (action) {
+            case "start":
+              instance.isRunning = true;
+              break;
+            case "stop":
+              instance.isRunning = false;
+              break;
+            case "log":
+              if (data) {
+                if (!instance.log)
+                  instance.log = [];
+                
+                instance.log.push(`${new Date(data.timestamp).toLocaleTimeString()} - ${data.message}`);
+                if (name === this.instanceNameSSValue) {
+                  this.instanceLogOutput = instance.log;
+                  if (this.instanceLog && this.instanceLog.nativeElement) {
+                    const element = this.instanceLog.nativeElement;
+                    if (element.scrollTop + element.clientHeight === element.scrollHeight)
+                      setTimeout(() => element.scrollTop = element.scrollHeight, 0);
+                  }
+                } else if (this.instanceLogOutput === instance.log) {
+                  this.instanceLogOutput = [];
+                }
+              }
+              break;
+          }
+        });
+        this.eventSource.addEventListener("close", () => {
+          this.eventSource.close();
+          this.eventSource = null;
+        });
+        this.eventsStarted = true;
       }
     } else {
-      if (this.pingPongSubscriber != null) {
-        this.pingPongSubscriber.unsubscribe();
+      if (this.eventSource) {
+        this.eventSource.close();
       }
-      this.pingpongStarted = false;
+      this.eventsStarted = false;
     }
-  }
-
-  pingpong() {
-    this.configService.postPing(this.authKey).subscribe((response: ResultMessage) => {
-      if (response.success) {
-        // Pong
-      } else {
-        this.reloadEverything(true);
-      }
-    }, error => {
-      if (error.status == 401 || error.status == 400) {
-        // Try to login again
-        this.login(this.lastPassword);
-
-      } else if (error.status == 0) {
-        this.reloadEverything(true);
-      }
-    })
   }
 
   register(password: string) {
@@ -202,7 +234,7 @@ export class BetterREPLComponent extends UpgradableComponent {
         this.reloadEverything(false);
       }
       this.reloadEverything(!response.success);
-      this.handlePingpong(true);
+      this.handleEvents(true);
     }, error => {
       this.logGenericError("postRegister");
       this.reloadEverything(true);

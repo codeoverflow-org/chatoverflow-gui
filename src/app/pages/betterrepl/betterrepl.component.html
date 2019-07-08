@@ -284,7 +284,7 @@
           Show log
         </button>
       </div>
-      <div id="instanceLog" *ngIf="instanceLogOutput?.length > 0">{{ instanceLogOutput }}</div>
+      <div #instanceLog id="instanceLog" style="white-space: pre-wrap" *ngIf="instanceLogOutput?.length > 0">{{ instanceLogOutput.join("\n") }}</div>
     </base-card-body>
   </base-card>
 </div>
