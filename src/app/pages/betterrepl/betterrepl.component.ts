@@ -177,6 +177,7 @@ export class BetterREPLComponent extends UpgradableComponent {
         this.eventSource = new EventSource(`${this.configService["basePath"]}/events?authKey=${this.authKey}`);
         this.eventSource.onerror = () => {
           console.log("Lost connection. Trying to reconnect...");
+          this.eventsStarted = false;
           setTimeout(() => this.login(this.lastPassword), 1000);
         };
         this.eventSource.addEventListener("instance", (e: MessageEvent) => {
@@ -215,6 +216,7 @@ export class BetterREPLComponent extends UpgradableComponent {
         this.eventSource.addEventListener("close", () => {
           this.eventSource.close();
           this.eventSource = null;
+          this.eventsStarted = false;
         });
         this.eventsStarted = true;
       }
