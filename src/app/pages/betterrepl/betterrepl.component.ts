@@ -22,10 +22,7 @@ import {
   PluginLogMessageDTO
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
-
-interface PluginInstanceWithLog extends PluginInstance {
-  log?: string[];
-}
+import { EventService } from "../../../event.service";
 
 @Component({
   selector: 'better-repl',
@@ -48,7 +45,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private pluginTypes: Array<PluginType>;
 
   private connectorKeys: Array<ConnectorKey>;
-  private pluginInstances: Array<PluginInstanceWithLog>;
+  private pluginInstances: Array<PluginInstance>;
 
   private instanceLogOutput: Array<string>;
   private instanceRequirements: Array<Requirement>;
@@ -69,13 +66,58 @@ export class BetterREPLComponent extends UpgradableComponent {
   private changeReqTypeValue = "";
   private changeReqValueValue = "";
 
-  private eventsStarted = false;
-  private eventSource: EventSource = null;
-
   constructor(private configService: ConfigService, private typeService: TypeService,
               private connectorService: ConnectorService, private instanceService: InstanceService,
-              private cryptoService: CryptoService) {
+              private cryptoService: CryptoService, private eventService: EventService) {
     super();
+
+    this.addEventListeners();
+  }
+
+  private addEventListeners() {
+    this.eventService.addEventListener("error", () => {
+      console.log("Lost connection. Trying to reconnect...");
+      setTimeout(() => this.login(this.lastPassword), 1000);
+    });
+
+    this.eventService.addEventListener("instance", ({ action, data }) => {
+      const instance = this.pluginInstances.find(i => i.instanceName === data.name);
+      if (!instance)
+        return;
+      
+      switch (action) {
+        case "start":
+          instance.isRunning = true;
+          break;
+        case "stop":
+          instance.isRunning = false;
+          break;
+        case "log":
+          if (data.message && data.timestamp) {
+            if (!instance.log)
+              instance.log = [];
+            
+            instance.log.push({ timestamp: new Date(data.timestamp).toLocaleTimeString(), message: data.message });
+            if (data.name === this.instanceNameSSValue) {
+              this.instanceLogOutput = this.getInstanceLog(instance);
+              this.scrollToLogEnd();
+            }
+          }
+          break;
+      }
+    });
+  }
+
+  private scrollToLogEnd(force?: boolean) {
+    if (this.instanceLog && this.instanceLog.nativeElement) {
+      const element = this.instanceLog.nativeElement;
+      if (force || element.scrollTop + element.clientHeight === element.scrollHeight)
+        setTimeout(() => element.scrollTop = element.scrollHeight, 0);
+    }
+  }
+
+  private getInstanceLog(instance: PluginInstance) {
+    return instance.log ? instance.log.map(log => `${log.timestamp} - ${log.message}`) : [];
   }
 
   reloadEverything(clearForms: boolean) {
@@ -172,59 +214,11 @@ export class BetterREPLComponent extends UpgradableComponent {
     }
 
     if (start) {
-      if (!this.eventsStarted) {
-        //todo find a better way to get the basePath
-        this.eventSource = new EventSource(`${this.configService["basePath"]}/events?authKey=${this.authKey}`);
-        this.eventSource.onerror = () => {
-          console.log("Lost connection. Trying to reconnect...");
-          this.eventsStarted = false;
-          setTimeout(() => this.login(this.lastPassword), 1000);
-        };
-        this.eventSource.addEventListener("instance", (e: MessageEvent) => {
-          const { name, action, data } = JSON.parse(e.data) as { name: string, action: string, data?: { message: string, timestamp: string } };
-          const instance = this.pluginInstances.find(i => i.instanceName === name);
-          if (!instance)
-            return;
-          
-          switch (action) {
-            case "start":
-              instance.isRunning = true;
-              break;
-            case "stop":
-              instance.isRunning = false;
-              break;
-            case "log":
-              if (data) {
-                if (!instance.log)
-                  instance.log = [];
-                
-                instance.log.push(`${new Date(data.timestamp).toLocaleTimeString()} - ${data.message}`);
-                if (name === this.instanceNameSSValue) {
-                  this.instanceLogOutput = instance.log;
-                  if (this.instanceLog && this.instanceLog.nativeElement) {
-                    const element = this.instanceLog.nativeElement;
-                    if (element.scrollTop + element.clientHeight === element.scrollHeight)
-                      setTimeout(() => element.scrollTop = element.scrollHeight, 0);
-                  }
-                } else if (this.instanceLogOutput === instance.log) {
-                  this.instanceLogOutput = [];
-                }
-              }
-              break;
-          }
-        });
-        this.eventSource.addEventListener("close", () => {
-          this.eventSource.close();
-          this.eventSource = null;
-          this.eventsStarted = false;
-        });
-        this.eventsStarted = true;
+      if (!this.eventService.isRunning()) {
+        this.eventService.start(this.authKey);
       }
     } else {
-      if (this.eventSource) {
-        this.eventSource.close();
-      }
-      this.eventsStarted = false;
+      this.eventService.close();
     }
   }
 
@@ -337,8 +331,14 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getInstances() {
-    this.pluginInstances = [];
     this.instanceService.getInstances(this.authKey).subscribe((response: Array<PluginInstance>) => {
+      if (this.pluginInstances) {
+        response.forEach(instance => {
+          const previousInstance = this.pluginInstances.find(i => i.instanceName === instance.instanceName);
+          if (previousInstance)
+            instance.log = previousInstance.log;
+        });
+      }
       this.pluginInstances = response;
       this.logRequest("getInstances", true, JSON.stringify(response));
     }, error => this.logGenericError("getInstances"));
@@ -425,6 +425,8 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.miPluginAuthorValue = instance.pluginAuthor;
     this.miInstanceNameValue = instance.instanceName;
     this.requirementsInstanceNameValue = instance.instanceName;
+    this.instanceLogOutput = this.getInstanceLog(instance);
+    this.scrollToLogEnd(true);
   }
 
   copyRequirementData(requirement: Requirement, instanceName: string) {
