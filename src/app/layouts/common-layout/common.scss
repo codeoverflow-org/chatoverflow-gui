@@ -1,0 +1,70 @@
+/* This common styles file should be used to create more readable html for our custom pages. */
+@import '../../../theme/styles';
+
+.card {
+
+  &--half-size {
+    @extend .mdl-cell, .mdl-cell--6-col-desktop, .mdl-cell--6-col-tablet, .mdl-cell--4-col-phone;
+  }
+
+  &--third-size {
+    @extend .mdl-cell, .mdl-cell--4-col-desktop, .mdl-cell--4-col-tablet, .mdl-cell--2-col-phone;
+  }
+
+  &--quarter-size {
+    @extend .mdl-cell, .mdl-cell--3-col-desktop, .mdl-cell--3-col-tablet, .mdl-cell--2-col-phone;
+  }
+}
+
+.card--title {
+  @extend .mdl-card__title-text;
+}
+
+/* USAGE: container--text mdl-js-textfield */
+.container {
+  &--text {
+    @extend .mdl-cell, .mdl-cell--6-col, .mdl-textfield, .mdl-textfield--floating-label;
+  }
+}
+
+.button-base {
+  @extend .mdl-button;
+  color: #fff !important;
+}
+
+/* USAGE: button--red mdl-js-button mdl-js-ripple-effect */
+.button {
+
+  &--green {
+    @extend .button-base, .mdl-button--raised, .button--colored-green;
+  }
+
+  &--blue {
+    @extend .button-base, .mdl-button--raised, .button--colored-light-blue;
+  }
+
+  &--teal {
+    @extend .button-base, .mdl-button--raised, .button--colored-teal;
+  }
+
+  &--red {
+    @extend .button-base, .mdl-button--raised, .button--colored-red;
+  }
+
+  &--orange {
+    @extend .button-base, .mdl-button--raised, .button--colored-orange;
+  }
+}
+
+/* USAGE: button-trans--teal mdl-js-button mdl-js-ripple-effect */
+.button-trans {
+
+  &--white {
+    @extend .mdl-button;
+  }
+
+  &--teal {
+    @extend .mdl-button, .button--colored-teal;
+  }
+
+}

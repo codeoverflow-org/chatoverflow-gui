@@ -1,7 +1,7 @@
-<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Last request</h2>
+      <h2 class="card--title">Last request</h2>
     </base-card-title>
     <base-card-body>
       <div id="lastRequest">Request: {{ lastRequestCommand }}
@@ -12,24 +12,24 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Login / Register</h2>
+      <h2 class="card--title">Login / Register</h2>
     </base-card-title>
     <base-card-body>
       <div id="loginButtons">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="container--text mdl-js-textfield">
           <input class="mdl-textfield__input" type="password" id="password" value="" #passwordInput
                  (keyup.enter)="login(passwordInput.value)"/>
           <label class="mdl-textfield__label" for="password">Framework password</label>
         </div>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+        <button class="button--green mdl-js-button mdl-js-ripple-effect"
                 (click)="login(passwordInput.value)">
           <i class="material-icons">vpn_key</i>
           Login
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-light-blue"
+        <button class="button--blue mdl-js-button mdl-js-ripple-effect"
                 (click)="register(passwordInput.value)">
           <i class="material-icons">account_circle</i>
           Register
@@ -44,10 +44,10 @@
 </div>
 
 
-<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+<div class="card--third-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Connector types</h2>
+      <h2 class="card--title">Connector types</h2>
     </base-card-title>
     <base-card-body>
       <ul class="typeList">
@@ -55,22 +55,22 @@
       </ul>
       <div id="requestTypes">
         <div>
-          <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <div class="container--text mdl-js-textfield">
             <input class="mdl-textfield__input" type="text" id="reqImplTypeString" value="" #reqImplTypeString
                    (keyup.enter)="getRequirementImpl(reqImplTypeString.value)"/>
             <label class="mdl-textfield__label" for="reqImplTypeString">API type string</label>
           </div>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-teal"
+          <button class="button--teal mdl-js-button mdl-js-ripple-effect"
                   (click)="getRequirementImpl(reqImplTypeString.value)">Get Req Impl
           </button>
         </div>
         <div>
-          <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <div class="container--text mdl-js-textfield">
             <input class="mdl-textfield__input" type="text" id="getSubTypesString" value="" #getSubTypesString
                    (keyup.enter)="getSubTypes(getSubTypesString.value)"/>
             <label class="mdl-textfield__label" for="getSubTypesString">API type string</label>
           </div>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-teal"
+          <button class="button--teal mdl-js-button mdl-js-ripple-effect"
                   (click)="getSubTypes(getSubTypesString.value)">Get sub types
           </button>
         </div>
@@ -79,10 +79,10 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+<div class="card--third-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Requirement types</h2>
+      <h2 class="card--title">Requirement types</h2>
     </base-card-title>
     <base-card-body>
       <ul class="typeList">
@@ -97,10 +97,10 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+<div class="card--third-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Plugin types</h2>
+      <h2 class="card--title">Plugin types</h2>
     </base-card-title>
     <base-card-body>
       <ul class="typeList">
@@ -111,14 +111,14 @@
 </div>
 
 
-<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--2-col-phone">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
       <h2 class="mdl-card__title-text">Connectors</h2>
     </base-card-title>
     <base-card-body>
       <div>
-        <button class="mdl-button mdl-js-button mdl-js-ripple-effect button--colored-white"
+        <button class="button-trans--white mdl-js-button mdl-js-ripple-effect"
                 (click)="getRegisteredConnectors()">
           <i class="material-icons">refresh</i>
           Refresh connectors
@@ -126,7 +126,7 @@
       </div>
       <ul>
         <li *ngFor="let connectorKey of connectorKeys">{{connectorKey.sourceIdentifier}}
-          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-teal"
+          <button class="button-trans--teal mdl-js-button mdl-js-ripple-effect"
                   (click)="copyConnectorData(connectorKey)">
             <i class="material-icons">edit</i>
           </button>
@@ -138,35 +138,35 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+<div class="card--quarter-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Manage connectors</h2>
+      <h2 class="card--title">Manage connectors</h2>
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="mcSourceIdentifierValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageConnectorSourceIdentifier" value=""
                  #mcSourceIdentifier [(ngModel)]="mcSourceIdentifierValue"/>
           <label class="mdl-textfield__label" for="manageConnectorSourceIdentifier">Source identifier</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="mcConnectorTypeValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageConnectorConnectorType" value=""
                  #mcConnectorType [(ngModel)]="mcConnectorTypeValue"/>
           <label class="mdl-textfield__label" for="manageConnectorConnectorType">Connector type</label>
         </div>
         <div class="manageButtons">
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-light-blue"
+          <button class="button--blue mdl-js-button mdl-js-ripple-effect"
                   (click)="manageConnectorGET(mcSourceIdentifier.value, mcConnectorType.value)">
             GET
           </button>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+          <button class="button--green mdl-js-button mdl-js-ripple-effect"
                   (click)="manageConnectorPOST(mcSourceIdentifier.value, mcConnectorType.value)">
             ADD
           </button>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+          <button class="button--red mdl-js-button mdl-js-ripple-effect"
                   (click)="manageConnectorDELETE(mcSourceIdentifier.value, mcConnectorType.value)">
             DELETE
           </button>
@@ -175,46 +175,46 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+<div class="card--quarter-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Manage credentials</h2>
+      <h2 class="card--title">Manage credentials</h2>
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="mcrSourceIdentifierValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsSourceIdentifier" value=""
                  #mcrSourceIdentifier [(ngModel)]="mcrSourceIdentifierValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsSourceIdentifier">Source identifier</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="mcrConnectorTypeValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsConnectorType" value=""
                  #mcrConnectorType [(ngModel)]="mcrConnectorTypeValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsConnectorType">Connector type</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="container--text mdl-js-textfield">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsKey" value=""
                  #mcrKey/>
           <label class="mdl-textfield__label" for="manageCredentialsKey">Key</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <div class="container--text mdl-js-textfield">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsValue" value=""
                  #mcrValue/>
           <label class="mdl-textfield__label" for="manageCredentialsValue">Value</label>
         </div>
         <div class="manageButtons">
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-light-blue"
+          <button class="button--blue mdl-js-button mdl-js-ripple-effect"
                   (click)="manageCredentialsGET(mcrSourceIdentifier.value, mcrConnectorType.value, mcrKey.value)">
             GET
           </button>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+          <button class="button--green mdl-js-button mdl-js-ripple-effect"
                   (click)="manageCredentialsPOST(mcrSourceIdentifier.value, mcrConnectorType.value,
                   mcrKey.value, mcrValue.value)">
             ADD
           </button>
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+          <button class="button--red mdl-js-button mdl-js-ripple-effect"
                   (click)="manageCredentialsDELETE(mcrSourceIdentifier.value, mcrConnectorType.value, mcrKey.value)">
             DELETE
           </button>
@@ -225,14 +225,14 @@
 </div>
 
 
-<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--2-col-phone">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Plugin instances</h2>
+      <h2 class="card--title">Plugin instances</h2>
     </base-card-title>
     <base-card-body>
       <div>
-        <button class="mdl-button mdl-js-button mdl-js-ripple-effect button--colored-white"
+        <button class="button-trans--white mdl-js-button mdl-js-ripple-effect"
                 (click)="getInstances()">
           <i class="material-icons">refresh</i>
           Refresh instances
@@ -257,29 +257,29 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--2-col-phone">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Start / Stop / Log</h2>
+      <h2 class="card--title">Start / Stop / Log</h2>
     </base-card-title>
     <base-card-body>
       <div class="manageButtons">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="instanceNameSSValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="instanceNameSS" value=""
                  #instanceNameSS [(ngModel)]="instanceNameSSValue"/>
           <label class="mdl-textfield__label" for="instanceNameSS">Instance Name</label>
         </div>
 
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+        <button class="button--green mdl-js-button mdl-js-ripple-effect"
                 (click)="startPlugin(instanceNameSS.value)">
           START
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+        <button class="button--red mdl-js-button mdl-js-ripple-effect"
                 (click)="stopPlugin(instanceNameSS.value)">
           STOP
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-orange"
+        <button class="button--orange mdl-js-button mdl-js-ripple-effect"
                 (click)="getLog(instanceNameSS.value)">
           Show log
         </button>
@@ -289,26 +289,26 @@
   </base-card>
 </div>
 
-<div class="mdl-cell mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+<div class="card--quarter-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Create / Delete instance</h2>
+      <h2 class="card--title">Create / Delete instance</h2>
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="miPluginNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageInstancePluginName" value=""
                  #miPluginName [(ngModel)]="miPluginNameValue">
           <label class="mdl-textfield__label" for="manageInstancePluginName">Plugin name</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="miPluginAuthorValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageInstancePluginAuthor" value=""
                  #miPluginAuthor [(ngModel)]="miPluginAuthorValue"/>
           <label class="mdl-textfield__label" for="manageInstancePluginAuthor">Plugin author</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="miInstanceNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="manageInstanceInstanceName" value=""
                  #miInstanceName [(ngModel)]="miInstanceNameValue"/>
@@ -316,11 +316,11 @@
         </div>
       </div>
       <div class="manageButtons">
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+        <button class="button--green mdl-js-button mdl-js-ripple-effect"
                 (click)="createPluginInstance(miInstanceName.value, miPluginName.value, miPluginAuthor.value)">
           CREATE
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+        <button class="button--red mdl-js-button mdl-js-ripple-effect"
                 (click)="deletePluginInstance(miInstanceName.value)">
           DELETE
         </button>
@@ -328,28 +328,28 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--6-col-desktop mdl-cell--6-col-tablet mdl-cell--2-col-phone">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Instance requirements</h2>
+      <h2 class="card--title">Instance requirements</h2>
     </base-card-title>
     <base-card-body>
       <div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="requirementsInstanceNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="requirementsInstanceName" value=""
                  #requirementsInstanceName [(ngModel)]="requirementsInstanceNameValue"
                  (keyup.enter)="getRequirements(requirementsInstanceName.value)"/>
           <label class="mdl-textfield__label" for="requirementsInstanceName">Instance name</label>
         </div>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-teal"
+        <button class="button--teal mdl-js-button mdl-js-ripple-effect"
                 (click)="getRequirements(requirementsInstanceName.value)">Show requirements
         </button>
       </div>
       <ul>
         <li *ngFor="let requirement of instanceRequirements">
           {{requirement.uniqueRequirementId}} ({{requirement.name}})
-          <button class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect button--colored-teal"
+          <button class="button-trans--teal mdl-js-button mdl-js-ripple-effect"
                   (click)="copyRequirementData(requirement, requirementsInstanceName.value)">
             <i class="material-icons">edit</i>
           </button>
@@ -363,32 +363,32 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="mdl-cell mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+<div class="card--quarter-size">
   <base-card>
     <base-card-title>
-      <h2 class="mdl-card__title-text">Change requirement</h2>
+      <h2 class="card--title">Change requirement</h2>
     </base-card-title>
     <base-card-body>
       <div class="form">
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="changeReqInstanceNameValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqInstanceName" value=""
                  #changeReqInstanceName [(ngModel)]="changeReqInstanceNameValue"/>
           <label class="mdl-textfield__label" for="changeReqInstanceName">Instance name</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="changeReqIDValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqID" value=""
                  #changeReqID [(ngModel)]="changeReqIDValue"/>
           <label class="mdl-textfield__label" for="changeReqID">Requirement ID</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="changeReqTypeValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqType" value=""
                  #changeReqType [(ngModel)]="changeReqTypeValue"/>
           <label class="mdl-textfield__label" for="changeReqType">Target type</label>
         </div>
-        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+        <div class="container--text mdl-js-textfield"
              [class.is-dirty]="changeReqValueValue.length > 0">
           <input class="mdl-textfield__input" type="text" id="changeReqValue" value=""
                  #changeReqValue [(ngModel)]="changeReqValueValue"/>
@@ -396,12 +396,12 @@
         </div>
 
       <div class="manageButtons">
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-green"
+        <button class="button--green mdl-js-button mdl-js-ripple-effect"
                 (click)="setRequirement(changeReqInstanceName.value, changeReqID.value,
                changeReqType.value, changeReqValue.value)">
           PUT
         </button>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect button--colored-red"
+        <button class="button--red mdl-js-button mdl-js-ripple-effect"
                 (click)="removeRequirement(changeReqInstanceName.value, changeReqID.value)">
           DELETE
         </button>
