@@ -1,28 +1,29 @@
-import {Component, HostBinding, ViewChild, ElementRef} from "@angular/core";
+import {Component, ElementRef, HostBinding, ViewChild} from "@angular/core";
 import {UpgradableComponent} from "theme/components/upgradable";
 import {
-  ResultMessage,
-  ConfigService,
-  TypeService,
-  RequirementTypes,
-  PluginType,
   APIAndSpecificType,
-  SubTypes,
-  ConnectorService,
-  InstanceService,
-  ConnectorKey,
+  ConfigService,
   ConnectorDetails,
+  ConnectorKey,
+  ConnectorMetadata,
   ConnectorRef,
+  ConnectorService,
   CredentialsEntry,
   EncryptedKeyValuePair,
+  InstanceService,
   PluginInstance,
   PluginInstanceRef,
+  PluginLogMessageDTO,
+  PluginType,
   Requirement,
   RequirementInfo,
-  PluginLogMessageDTO
+  RequirementTypes,
+  ResultMessage,
+  SubTypes,
+  TypeService
 } from "chatoverflow-api";
 import {CryptoService} from "../../../crypto.service";
-import { EventService } from "../../../event.service";
+import {EventService} from "../../../event.service";
 
 @Component({
   selector: 'better-repl',
@@ -41,6 +42,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private lastPassword = "";
 
   private connectorTypes: Array<string>;
+  private connectorMetadata: Map<string, ConnectorMetadata>;
   private requirementTypes: RequirementTypes;
   private pluginTypes: Array<PluginType>;
 
@@ -74,52 +76,6 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.addEventListeners();
   }
 
-  private addEventListeners() {
-    this.eventService.addEventListener("error", () => {
-      console.log("Lost connection. Trying to reconnect...");
-      setTimeout(() => this.login(this.lastPassword), 1000);
-    });
-
-    this.eventService.addEventListener("instance", ({ action, data }) => {
-      const instance = this.pluginInstances.find(i => i.instanceName === data.name);
-      if (!instance)
-        return;
-      
-      switch (action) {
-        case "start":
-          instance.isRunning = true;
-          break;
-        case "stop":
-          instance.isRunning = false;
-          break;
-        case "log":
-          if (data.message && data.timestamp) {
-            if (!instance.log)
-              instance.log = [];
-            
-            instance.log.push({ timestamp: new Date(data.timestamp).toLocaleTimeString(), message: data.message });
-            if (data.name === this.instanceNameSSValue) {
-              this.instanceLogOutput = this.getInstanceLog(instance);
-              this.scrollToLogEnd();
-            }
-          }
-          break;
-      }
-    });
-  }
-
-  private scrollToLogEnd(force?: boolean) {
-    if (this.instanceLog && this.instanceLog.nativeElement) {
-      const element = this.instanceLog.nativeElement;
-      if (force || element.scrollTop + element.clientHeight === element.scrollHeight)
-        setTimeout(() => element.scrollTop = element.scrollHeight, 0);
-    }
-  }
-
-  private getInstanceLog(instance: PluginInstance) {
-    return instance.log ? instance.log.map(log => `${log.timestamp} - ${log.message}`) : [];
-  }
-
   reloadEverything(clearForms: boolean) {
     if (clearForms) {
       this.authKey = "";
@@ -143,6 +99,7 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.changeReqValueValue = "";
 
       this.connectorTypes = [];
+      this.connectorMetadata = new Map();
       this.requirementTypes = null;
       this.pluginTypes = [];
       this.pluginInstances = [];
@@ -159,6 +116,7 @@ export class BetterREPLComponent extends UpgradableComponent {
 
   requestTypes() {
     this.connectorTypes = [];
+    this.connectorMetadata = new Map();
     this.requirementTypes = null;
     this.pluginTypes = [];
 
@@ -166,6 +124,18 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logRequest("getConnectorType", true, JSON.stringify(response));
       this.connectorTypes = response;
     }, error => this.logGenericError("getConnectorType"));
+
+    this.typeService.getConnectorsMetadata(this.authKey).subscribe((response: { [key: string]: ConnectorMetadata }) => {
+      this.logRequest("getConnectorsMetadata", true, JSON.stringify(response));
+
+      // This converts the typescript hash map structure to a "normal" js map
+      for (let key in response) {
+        let allValues = response[key];
+        for (let keyValue in allValues) {
+          this.connectorMetadata.set(keyValue, allValues[keyValue]);
+        }
+      }
+    }, error => this.logGenericError("getConnectorsMetadata"));
 
     this.typeService.getRequirementType(this.authKey).subscribe((response: RequirementTypes) => {
       this.logRequest("getRequirementType", true, JSON.stringify(response));
@@ -176,6 +146,52 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.logRequest("getPlugin", true, JSON.stringify(response));
       this.pluginTypes = response;
     }, error => this.logGenericError("getPlugin"));
+  }
+
+  private scrollToLogEnd(force?: boolean) {
+    if (this.instanceLog && this.instanceLog.nativeElement) {
+      const element = this.instanceLog.nativeElement;
+      if (force || element.scrollTop + element.clientHeight === element.scrollHeight)
+        setTimeout(() => element.scrollTop = element.scrollHeight, 0);
+    }
+  }
+
+  private getInstanceLog(instance: PluginInstance) {
+    return instance.log ? instance.log.map(log => `${log.timestamp} - ${log.message}`) : [];
+  }
+
+  private addEventListeners() {
+    this.eventService.addEventListener("error", () => {
+      console.log("Lost connection. Trying to reconnect...");
+      setTimeout(() => this.login(this.lastPassword), 1000);
+    });
+
+    this.eventService.addEventListener("instance", ({action, data}) => {
+      const instance = this.pluginInstances.find(i => i.instanceName === data.name);
+      if (!instance)
+        return;
+
+      switch (action) {
+        case "start":
+          instance.isRunning = true;
+          break;
+        case "stop":
+          instance.isRunning = false;
+          break;
+        case "log":
+          if (data.message && data.timestamp) {
+            if (!instance.log)
+              instance.log = [];
+
+            instance.log.push({timestamp: new Date(data.timestamp).toLocaleTimeString(), message: data.message});
+            if (data.name === this.instanceNameSSValue) {
+              this.instanceLogOutput = this.getInstanceLog(instance);
+              this.scrollToLogEnd();
+            }
+          }
+          break;
+      }
+    });
   }
 
   logRequest(command: string, lastRequestSuccessful: boolean, resultMessage: string) {

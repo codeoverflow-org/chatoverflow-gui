@@ -51,7 +51,30 @@
     </base-card-title>
     <base-card-body>
       <ul class="typeList">
-        <li *ngFor="let connectorType of connectorTypes">{{ connectorType }}</li>
+        <li *ngFor="let connectorType of connectorTypes">{{ connectorType }}
+          <ul>
+            <li>{{ connectorMetadata.get(connectorType)?.displayName }}</li>
+          </ul>
+        </li>
+      </ul>
+
+    </base-card-body>
+  </base-card>
+</div>
+<div class="card--third-size">
+  <base-card>
+    <base-card-title>
+      <h2 class="card--title">Requirement types</h2>
+    </base-card-title>
+    <base-card-body>
+      <ul class="typeList">
+        <li *ngFor="let inputType of requirementTypes?.input">{{ inputType }}</li>
+      </ul>
+      <ul class="typeList">
+        <li *ngFor="let outputType of requirementTypes?.output">{{ outputType }}</li>
+      </ul>
+      <ul class="typeList">
+        <li *ngFor="let parameterType of requirementTypes?.parameter">{{ parameterType }}</li>
       </ul>
       <div id="requestTypes">
         <div>
@@ -75,25 +98,6 @@
           </button>
         </div>
       </div>
-
-    </base-card-body>
-  </base-card>
-</div>
-<div class="card--third-size">
-  <base-card>
-    <base-card-title>
-      <h2 class="card--title">Requirement types</h2>
-    </base-card-title>
-    <base-card-body>
-      <ul class="typeList">
-        <li *ngFor="let inputType of requirementTypes?.input">{{ inputType }}</li>
-      </ul>
-      <ul class="typeList">
-        <li *ngFor="let outputType of requirementTypes?.output">{{ outputType }}</li>
-      </ul>
-      <ul class="typeList">
-        <li *ngFor="let parameterType of requirementTypes?.parameter">{{ parameterType }}</li>
-      </ul>
     </base-card-body>
   </base-card>
 </div>
