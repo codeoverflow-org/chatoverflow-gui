@@ -50,10 +50,18 @@
       <h2 class="card--title">Connector types</h2>
     </base-card-title>
     <base-card-body>
-      <ul class="typeList">
-        <li *ngFor="let connectorType of connectorTypes">{{ connectorType }}
-          <ul>
-            <li>{{ connectorMetadata.get(connectorType)?.displayName }}</li>
+      <ul>
+        <li *ngFor="let connectorType of connectorTypes">
+          <div *ngIf="connectorMetadata.get(connectorType)?.found"
+               [style.background-image]="'url(' + connectorMetadata.get(connectorType).icon + ')'"
+               class="connector-image"></div>
+          {{ connectorMetadata.get(connectorType)?.displayName }} <span class="type">({{ connectorType }})</span>
+          <ul class="typeList">
+            <li *ngIf="!connectorMetadata.get(connectorType)?.found">no metadata found.</li>
+            <li
+              *ngIf="connectorMetadata.get(connectorType)?.found">{{ connectorMetadata.get(connectorType)?.description }}</li>
+            <li *ngIf="connectorMetadata.get(connectorType)?.found">More Information: <a
+              [href]="connectorMetadata.get(connectorType)?.wikiUrl">Chat Overflow Wiki</a></li>
           </ul>
         </li>
       </ul>

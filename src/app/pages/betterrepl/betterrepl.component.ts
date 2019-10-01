@@ -42,7 +42,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private lastPassword = "";
 
   private connectorTypes: Array<string>;
-  private connectorMetadata: Map<string, ConnectorMetadata>;
+  private connectorMetadata: Map<string, ConnectorMetadata> = new Map();
   private requirementTypes: RequirementTypes;
   private pluginTypes: Array<PluginType>;
 
@@ -133,6 +133,13 @@ export class BetterREPLComponent extends UpgradableComponent {
         let allValues = response[key];
         for (let keyValue in allValues) {
           this.connectorMetadata.set(keyValue, allValues[keyValue]);
+
+          // Setting a placeholder display name for not found metadata
+          if (!this.connectorMetadata.get(keyValue).found) {
+            let fakeDisplayName = keyValue.substring(keyValue.lastIndexOf(".") + 1);
+            fakeDisplayName.replace("Connector", "");
+            this.connectorMetadata.get(keyValue).displayName = fakeDisplayName;
+          }
         }
       }
     }, error => this.logGenericError("getConnectorsMetadata"));

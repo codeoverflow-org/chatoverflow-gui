@@ -26,7 +26,23 @@
 
 .typeList {
   margin-left: -20px;
-  font-size: 8pt;
+  font-size: 8pt !important;
+}
+
+.typeList a {
+  font-size: 8pt !important;
+}
+
+.type {
+  font-size: 6pt !important;
+}
+
+.connector-image {
+  height: 16px;
+  width: 16px;
+  background-size: contain;
+  display: inline-block;
+  margin-right: 3px;
 }
 
 #requestTypes > div > div {
