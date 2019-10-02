@@ -353,6 +353,17 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.mcrConnectorTypeValue = connectorKey.qualifiedConnectorType;
   }
 
+  copyToAddConnector(connectorType: string) {
+    this.mcConnectorTypeValue = connectorType;
+    this.mcSourceIdentifierValue = "";
+  }
+
+  copyToAddPlugin(pluginName: string, pluginAuthor: string) {
+    this.miPluginAuthorValue = pluginAuthor;
+    this.miPluginNameValue = pluginName;
+    this.miInstanceNameValue = "";
+  }
+
   getInstances() {
     this.instanceService.getInstances(this.authKey).subscribe((response: Array<PluginInstance>) => {
       if (this.pluginInstances) {

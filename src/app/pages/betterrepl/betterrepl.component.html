@@ -44,7 +44,7 @@
 </div>
 
 
-<div class="card--third-size">
+<div class="card--half-size">
   <base-card>
     <base-card-title>
       <h2 class="card--title">Connector types</h2>
@@ -56,12 +56,15 @@
                [style.background-image]="'url(' + connectorMetadata.get(connectorType).icon + ')'"
                class="connector-image"></div>
           {{ connectorMetadata.get(connectorType)?.displayName }} <span class="type">({{ connectorType }})</span>
+          <button (click)="copyToAddConnector(connectorType)"
+                  class="button-trans--green mdl-js-button mdl-js-ripple-effect">
+            <i class="material-icons">add</i>
+          </button>
           <ul class="typeList">
             <li *ngIf="!connectorMetadata.get(connectorType)?.found">no metadata found.</li>
             <li
-              *ngIf="connectorMetadata.get(connectorType)?.found">{{ connectorMetadata.get(connectorType)?.description }}</li>
-            <li *ngIf="connectorMetadata.get(connectorType)?.found">More Information: <a
-              [href]="connectorMetadata.get(connectorType)?.wikiUrl">Chat Overflow Wiki</a></li>
+              *ngIf="connectorMetadata.get(connectorType)?.found">{{ connectorMetadata.get(connectorType)?.description }}
+              More Information: <a [href]="connectorMetadata.get(connectorType)?.wikiUrl">Chat Overflow Wiki</a></li>
           </ul>
         </li>
       </ul>
@@ -109,14 +112,19 @@
     </base-card-body>
   </base-card>
 </div>
-<div class="card--third-size">
+<div class="card--sixth-size">
   <base-card>
     <base-card-title>
       <h2 class="card--title">Plugin types</h2>
     </base-card-title>
     <base-card-body>
       <ul class="typeList">
-        <li *ngFor="let pluginType of pluginTypes">{{ pluginType.name }} ({{pluginType.author}})</li>
+        <li *ngFor="let pluginType of pluginTypes">{{ pluginType.name }} ({{pluginType.author}})
+          <button (click)="copyToAddPlugin(pluginType.name, pluginType.author)"
+                  class="button-trans--green mdl-js-button mdl-js-ripple-effect">
+            <i class="material-icons">add</i>
+          </button>
+        </li>
       </ul>
     </base-card-body>
   </base-card>
