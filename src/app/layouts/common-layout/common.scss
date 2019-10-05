@@ -63,6 +63,8 @@
 /* USAGE: button-trans--teal mdl-js-button mdl-js-ripple-effect */
 .button-trans {
 
+  padding: 0 !important;
+
   &--white {
     @extend .mdl-button;
   }

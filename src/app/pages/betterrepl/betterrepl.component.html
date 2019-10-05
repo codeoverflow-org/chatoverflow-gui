@@ -57,7 +57,7 @@
                class="connector-image"></div>
           {{ connectorMetadata.get(connectorType)?.displayName }} <span class="type">({{ connectorType }})</span>
           <button (click)="copyToAddConnector(connectorType)"
-                  class="button-trans--green mdl-js-button mdl-js-ripple-effect">
+                  class="button-trans--green mdl-js-button mdl-js-ripple-effect mdl-button--icon">
             <i class="material-icons">add</i>
           </button>
           <ul class="typeList">
@@ -121,7 +121,7 @@
       <ul class="typeList">
         <li *ngFor="let pluginType of pluginTypes">{{ pluginType.name }} ({{pluginType.author}})
           <button (click)="copyToAddPlugin(pluginType.name, pluginType.author)"
-                  class="button-trans--green mdl-js-button mdl-js-ripple-effect">
+                  class="button-trans--green mdl-js-button mdl-js-ripple-effect mdl-button--icon">
             <i class="material-icons">add</i>
           </button>
         </li>
@@ -145,13 +145,33 @@
         </button>
       </div>
       <ul>
-        <li *ngFor="let connectorKey of connectorKeys">{{connectorKey.sourceIdentifier}}
-          <button class="button-trans--teal mdl-js-button mdl-js-ripple-effect"
-                  (click)="copyConnectorData(connectorKey)">
-            <i class="material-icons">edit</i>
+        <li *ngFor="let connectorEntry of connectorData">{{connectorEntry.sourceIdentifier}}
+          <button (click)="copyConnectorData(connectorEntry)"
+                  class="button-trans--teal mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+            <i class="material-icons material-li">edit</i>
           </button>
           <ul>
-            <li>{{connectorKey.qualifiedConnectorType}}</li>
+            <li>{{connectorEntry.qualifiedConnectorType}}</li>
+            <li>
+              <a (click)="getConnectorDetails(connectorEntry)" *ngIf="connectorEntry.details == null"
+                 class="pointer">Request details...</a>
+              <p *ngIf="connectorEntry.details != null">Running: {{ connectorEntry.details.isRunning }} - Credentials:
+                <u *ngFor="let cred of connectorEntry.details.requiredCredentialKeys">{{ cred }}
+                  <button
+                    (click)="copyCredentials(connectorEntry.qualifiedConnectorType, connectorEntry.sourceIdentifier, cred)"
+                    class="button-trans--teal mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                    <i class="material-icons material-li">edit</i>
+                  </button>
+                </u>
+                <span
+                  *ngFor="let optionalCred of connectorEntry.details.optionalCredentialKeys">{{ optionalCred}}
+                  <button
+                    (click)="copyCredentials(connectorEntry.qualifiedConnectorType, connectorEntry.sourceIdentifier, optionalCred)"
+                    class="button-trans--teal mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                    <i class="material-icons material-li">edit</i>
+                  </button></span>
+              </p>
+            </li>
           </ul>
         </li>
       </ul>
@@ -214,14 +234,16 @@
                  #mcrConnectorType [(ngModel)]="mcrConnectorTypeValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsConnectorType">Connector type</label>
         </div>
-        <div class="container--text mdl-js-textfield">
+        <div [class.is-dirty]="mcrKeyValue.length > 0"
+             class="container--text mdl-js-textfield">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsKey" value=""
-                 #mcrKey/>
+                 #mcrKey [(ngModel)]="mcrKeyValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsKey">Key</label>
         </div>
-        <div class="container--text mdl-js-textfield">
+        <div [class.is-dirty]="mcrValueValue.length > 0"
+             class="container--text mdl-js-textfield">
           <input class="mdl-textfield__input" type="text" id="manageCredentialsValue" value=""
-                 #mcrValue/>
+                 #mcrValue [(ngModel)]="mcrValueValue"/>
           <label class="mdl-textfield__label" for="manageCredentialsValue">Value</label>
         </div>
         <div class="manageButtons">
@@ -266,7 +288,7 @@
                   [class.button--colored-orange]="!instance.isRunning"
                   [class.button--colored-green]="instance.isRunning"
                   (click)="copyInstanceData(instance)">
-            <i class="material-icons">edit</i>
+            <i class="material-icons material-li">edit</i>
           </button>
           <ul>
             <li>{{ instance.pluginName }} ({{ instance.pluginAuthor }})</li>
@@ -304,7 +326,8 @@
           Show log
         </button>
       </div>
-      <div #instanceLog id="instanceLog" style="white-space: pre-wrap" *ngIf="instanceLogOutput?.length > 0">{{ instanceLogOutput.join("\n") }}</div>
+      <div #instanceLog *ngIf="instanceLogOutput?.length > 0" id="instanceLog"
+           style="white-space: pre-wrap">{{ instanceLogOutput.join("\n") }}</div>
     </base-card-body>
   </base-card>
 </div>
@@ -369,9 +392,9 @@
       <ul>
         <li *ngFor="let requirement of instanceRequirements">
           {{requirement.uniqueRequirementId}} ({{requirement.name}})
-          <button class="button-trans--teal mdl-js-button mdl-js-ripple-effect"
+          <button class="button-trans--teal mdl-js-button mdl-js-ripple-effect mdl-button--icon"
                   (click)="copyRequirementData(requirement, requirementsInstanceName.value)">
-            <i class="material-icons">edit</i>
+            <i class="material-icons material-li">edit</i>
           </button>
           <ul>
             <li>optional: {{requirement.isOptional}} - set: {{requirement.isSet}}</li>
@@ -415,17 +438,17 @@
           <label class="mdl-textfield__label" for="changeReqValue">Value</label>
         </div>
 
-      <div class="manageButtons">
-        <button class="button--green mdl-js-button mdl-js-ripple-effect"
-                (click)="setRequirement(changeReqInstanceName.value, changeReqID.value,
-               changeReqType.value, changeReqValue.value)">
-          PUT
-        </button>
-        <button class="button--red mdl-js-button mdl-js-ripple-effect"
-                (click)="removeRequirement(changeReqInstanceName.value, changeReqID.value)">
-          DELETE
-        </button>
-      </div>
+        <div class="manageButtons">
+          <button (click)="setRequirement(changeReqInstanceName.value, changeReqID.value,
+               changeReqType.value, changeReqValue.value)"
+                  class="button--green mdl-js-button mdl-js-ripple-effect">
+            PUT
+          </button>
+          <button (click)="removeRequirement(changeReqInstanceName.value, changeReqID.value)"
+                  class="button--red mdl-js-button mdl-js-ripple-effect">
+            DELETE
+          </button>
+        </div>
       </div>
     </base-card-body>
   </base-card>

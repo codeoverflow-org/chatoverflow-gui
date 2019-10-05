@@ -37,6 +37,16 @@
   font-size: 6pt !important;
 }
 
+.material-li {
+  font-size: 14pt !important;
+}
+
+.pointer {
+  cursor: pointer;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+}
+
 .connector-image {
   height: 16px;
   width: 16px;

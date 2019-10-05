@@ -25,6 +25,13 @@ import {
 import {CryptoService} from "../../../crypto.service";
 import {EventService} from "../../../event.service";
 
+class ConnectorData implements ConnectorKey {
+  public constructor(public qualifiedConnectorType: string,
+                     public sourceIdentifier: string,
+                     public details: ConnectorDetails) {
+  }
+}
+
 @Component({
   selector: 'better-repl',
   templateUrl: './betterrepl.component.html',
@@ -46,7 +53,7 @@ export class BetterREPLComponent extends UpgradableComponent {
   private requirementTypes: RequirementTypes;
   private pluginTypes: Array<PluginType>;
 
-  private connectorKeys: Array<ConnectorKey>;
+  private connectorData: Array<ConnectorData>;
   private pluginInstances: Array<PluginInstance>;
 
   private instanceLogOutput: Array<string>;
@@ -56,6 +63,8 @@ export class BetterREPLComponent extends UpgradableComponent {
   private mcConnectorTypeValue = "";
   private mcrSourceIdentifierValue = "";
   private mcrConnectorTypeValue = "";
+  private mcrKeyValue = "";
+  private mcrValueValue = "";
 
   private instanceNameSSValue = "";
   private miPluginNameValue = "";
@@ -86,6 +95,8 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.mcConnectorTypeValue = "";
       this.mcrSourceIdentifierValue = "";
       this.mcrConnectorTypeValue = "";
+      this.mcrKeyValue = "";
+      this.mcrValueValue = "";
 
       this.instanceNameSSValue = "";
       this.miPluginNameValue = "";
@@ -103,7 +114,7 @@ export class BetterREPLComponent extends UpgradableComponent {
       this.requirementTypes = null;
       this.pluginTypes = [];
       this.pluginInstances = [];
-      this.connectorKeys = [];
+      this.connectorData = [];
 
     } else {
 
@@ -273,10 +284,10 @@ export class BetterREPLComponent extends UpgradableComponent {
   }
 
   getRegisteredConnectors() {
-    this.connectorKeys = [];
+    this.connectorData = [];
     this.connectorService.getConnectors(this.authKey).subscribe((response: Array<ConnectorKey>) => {
       this.logRequest("getConnectors", true, JSON.stringify(response));
-      this.connectorKeys = response;
+      response.forEach(key => this.connectorData.push(new ConnectorData(key.qualifiedConnectorType, key.sourceIdentifier, null)));
     }, error => this.logGenericError("getConnectors"));
   }
 
@@ -351,6 +362,8 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.mcrSourceIdentifierValue = connectorKey.sourceIdentifier;
     this.mcConnectorTypeValue = connectorKey.qualifiedConnectorType;
     this.mcrConnectorTypeValue = connectorKey.qualifiedConnectorType;
+    this.mcrKeyValue = "";
+    this.mcrValueValue = "";
   }
 
   copyToAddConnector(connectorType: string) {
@@ -468,6 +481,22 @@ export class BetterREPLComponent extends UpgradableComponent {
     this.changeReqIDValue = requirement.uniqueRequirementId;
     this.changeReqTypeValue = requirement.targetType;
     this.changeReqValueValue = requirement.value;
+  }
+
+  getConnectorDetails(connectorKey: ConnectorData) {
+    this.connectorService.getConnector(connectorKey.qualifiedConnectorType, connectorKey.sourceIdentifier, this.authKey)
+      .subscribe((response: ConnectorDetails) => {
+        this.logRequest("getConnector", true, JSON.stringify(response));
+
+        connectorKey.details = response;
+      }, error => this.logGenericError("getConnector"));
+  }
+
+  copyCredentials(connectorType: string, sourceIdentifier: string, key: string) {
+    this.mcrConnectorTypeValue = connectorType;
+    this.mcrSourceIdentifierValue = sourceIdentifier;
+    this.mcrKeyValue = key;
+    this.mcrValueValue = "";
   }
 
 }
