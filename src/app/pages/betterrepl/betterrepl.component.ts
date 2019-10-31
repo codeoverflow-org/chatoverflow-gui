@@ -21,7 +21,7 @@ import {
   ResultMessage,
   SubTypes,
   TypeService
-} from "chatoverflow-api";
+} from "@codeoverflow-org/chatoverflow";
 import {CryptoService} from "../../../crypto.service";
 import {EventService} from "../../../event.service";
 

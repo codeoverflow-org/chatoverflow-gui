@@ -3,11 +3,11 @@ import {BrowserModule} from "@angular/platform-browser";
 import {AppRoutingModule} from "./app-routing.module";
 import {AppComponent} from "./app.component";
 import {DashboardModule} from "./pages/dashboard";
-import {ApiModule, BASE_PATH} from "chatoverflow-api";
+import {ApiModule, BASE_PATH} from "@codeoverflow-org/chatoverflow";
 import {HttpClientModule} from "@angular/common/http";
 import {BetterREPLComponent} from "./pages/betterrepl/betterrepl.component";
 import {ThemeModule} from "../theme/theme.module";
-import {ReactiveFormsModule, FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [AppComponent, BetterREPLComponent],

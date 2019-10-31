@@ -1,5 +1,5 @@
-import { EventsService } from "chatoverflow-api";
-import { Injectable } from "@angular/core";
+import {EventsService} from "@codeoverflow-org/chatoverflow";
+import {Injectable} from "@angular/core";
 
 interface EventMessage<T> {
   action: string;
@@ -31,7 +31,7 @@ export class EventService extends EventsService {
         this.addListener(type);
       }
     }
-    
+
     this.eventListeners[type].push(listener);
   }
 

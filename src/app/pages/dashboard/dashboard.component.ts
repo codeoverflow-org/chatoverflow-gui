@@ -1,6 +1,6 @@
 import {Component, HostBinding} from "@angular/core";
 import {UpgradableComponent} from "theme/components/upgradable";
-import {ConfigService, ConfigInfo} from "chatoverflow-api";
+import {ConfigInfo, ConfigService} from "@codeoverflow-org/chatoverflow";
 import {Router} from "@angular/router";
 
 @Component({
