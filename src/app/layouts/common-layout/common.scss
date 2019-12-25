@@ -2,7 +2,6 @@
 @import '../../../theme/styles';
 
 .card {
-
   &--half-size {
     @extend .mdl-cell, .mdl-cell--6-col-desktop, .mdl-cell--6-col-tablet, .mdl-cell--4-col-phone;
   }
@@ -33,12 +32,12 @@
 
 .button-base {
   @extend .mdl-button;
+
   color: #fff !important;
 }
 
 /* USAGE: button--red mdl-js-button mdl-js-ripple-effect */
 .button {
-
   &--green {
     @extend .button-base, .mdl-button--raised, .button--colored-green;
   }
@@ -62,7 +61,6 @@
 
 /* USAGE: button-trans--teal mdl-js-button mdl-js-ripple-effect */
 .button-trans {
-
   padding: 0 !important;
 
   &--white {
@@ -76,5 +74,4 @@
   &--green {
     @extend .mdl-button, .button--colored-green;
   }
-
 }
