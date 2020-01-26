@@ -1,0 +1,47 @@
+# When a tag gets created this Action automatically publishes the GUI to the GitHub Package Registry as a jar
+
+name: Publish GUI Package
+
+on:
+  push:
+    # Please don't run this on any branches ...
+    branches-ignore:
+    - "**"
+    # ..., but run it on any tag
+    tags:
+    - "**"
+
+jobs:
+  publish-gui:
+    name: Publish GUI Package
+    runs-on: ubuntu-latest
+    steps:
+      # Temporarily save repository owner in an env variable(needed by sbt auth)
+      - run: echo "::set-env name=GITHUB_OWNER::$(echo "${GITHUB_REPOSITORY}" | cut -d / -f1)"
+
+      # Checkout main repository
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ env.GITHUB_OWNER }}/chatoverflow
+          ref: ${{ github.ref }}
+
+      - name: Clone the API
+        run: bash .scripts/checkout-repos.sh
+
+      - uses: olafurpg/setup-scala@v5
+        name: Install java & sbt
+        with:
+          java-version: openjdk@1.8
+
+      - name: Login to GPR(sbt)
+        run: bash .scripts/authenticate-sbt.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to GPR(npm)
+        run: bash .scripts/authenticate-npm.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Package
+        run: sbt guiProject/publish
