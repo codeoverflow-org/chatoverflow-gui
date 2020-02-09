@@ -24,7 +24,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
   providers: [
     {
       provide: BASE_PATH,
-      useValue: `http://${window.location.hostname}:2400`
+      useValue: `http://${window.location.host}`
     }
   ],
   bootstrap: [AppComponent],
