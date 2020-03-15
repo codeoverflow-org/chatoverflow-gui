@@ -1,11 +1,13 @@
-import org.codeoverflow.chatoverflow.build.GUIUtility
+import org.codeoverflow.chatoverflow.build.{GUIUtility, BuildUtils}
 
 name := "chatoverflow-gui"
 
 // Loads version from package.json
 version := {
   val util = new GUIUtility(null)
-  util.getPackageJson(baseDirectory.value).flatMap(json => util.getGUIVersion(json)).getOrElse("unknown")
+  val rawVersion = util.getPackageJson(baseDirectory.value).flatMap(json => util.getGUIVersion(json)).getOrElse("unknown")
+
+  BuildUtils.dynamicSnapshotVersion(rawVersion)
 }
 
 def buildGui(prod: Boolean) = Def.task {
